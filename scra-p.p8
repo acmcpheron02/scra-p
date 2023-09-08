@@ -27,44 +27,117 @@ end
 --Player--
 player = {
     parts = {},
+    total_def = 6,
     total_hp = 10,
-    current_hp = 6,
+    current_hp = 6
 }
 player.parts.head = {
     hp = 10,
-    atk = 2,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 6,
+    hits = 1,
     acc = 5,
-    name = 'helmet',
-    action = 'scan'
+    action = 'Laser Beam'
 }
 player.parts.rarm = {
-    hp = 2,
-    atk = 7,
-    acc = 4,
-    name = "gun",
-    action = "shoot"
+    hp = 10,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 2,
+    hits = 4,
+    acc = 2,
+    action = 'Gattling'
 }
 player.parts.larm = {
-    hp = 3,
-    atk = 6,
-    acc = 7,
-    name = "sword",
-    action = "slash"
+    hp = 10,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 10,
+    hits = 1,
+    acc = 1,
+    action = 'Slash'
 }
-player.parts.legs = {
-    hp = 9,
-    atk = 2,
-    acc = 7,
-    speed = 12,
-    name = "legs",
-    action = "kick"
+player.parts.frame = {
+    hp = 10,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 10,
+    hits = 1,
+    acc = 1,
+    action = 'Wait'
 }
+
+function robo_update_stats (target)
+    target.total_hp = 0
+    target.total_def = 0
+    for key, value in pairs(target.parts) do
+        target.total_hp += target.parts[key].hp
+        target.total_def += target.parts[key].def
+    end
+    target.total_def /= 5
+end
+
+
 
 opponent = {
     parts = {},
     total_hp = 10,
     current_hp = 8,
 }
+opponent.parts.head = {
+    hp = 10,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 6,
+    hits = 1,
+    acc = 5,
+    action = 'Laser Beam'
+}
+opponent.parts.rarm = {
+    hp = 10,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 2,
+    hits = 4,
+    acc = 2,
+    action = 'Gattling'
+}
+opponent.parts.larm = {
+    hp = 10,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 10,
+    hits = 1,
+    acc = 1,
+    action = 'Slash'
+}
+opponent.parts.frame = {
+    hp = 10,
+    def = 2
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 10,
+    hits = 1,
+    acc = 1,
+    action = 'Wait'
+}
+
 function player:hp_bar()
     local x1, y1, x2, y2 = 10, 20, 36, 15
     local pct = self.current_hp / self.total_hp
@@ -80,8 +153,9 @@ combat_menu = {
     x_pos = 8,
     y_pos = 60
 }
+
 combat_menu.options = {
-    "attack 1", "attack 2", "attack 3"
+    
 }
 
 function combat_menu.display(self)
@@ -102,21 +176,15 @@ function combat_menu.movecursor(self, direction)
     end
 end
 
-
 --title definitions--
 title = {}
 
 function title.state_update()
-    hp_total = 0
-    for key, value in pairs(player.parts) do
-        hp_total += player.parts[key].hp
-    end
     if btnp(5) then game_state = combat end
 end
 
 function title.state_draw()
     print("title draw")
-    print("hp = " .. hp_total)
 end
 
 --combat definitions--

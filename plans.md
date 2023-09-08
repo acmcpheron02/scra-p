@@ -5,12 +5,21 @@ I don't think RPS via different damage types is the way to go
 Right now I'm thinking every part should have 
     HP or Shields (contributed to the whole)
     Defense
+        Average of all parts, 0-10
+        5% removed per tier for a max of 50% reduction
     Durability (used per action) 
     Speed (How long until next action)
     Cooldown (How long until part is usable again)
     Damage (How much hurty)
     Hits (How many hurty)
     Accuracy (hit chance)
+        tiers of accuracy
+        5 = always hit
+        4 = 90% chance
+        3 = 80% chance
+        2 = 70% chance
+        1 = 60% chance
+        0 = 50% chance
 
 In practice, no part has all three of Spd, Cooldown, Durability, and Dmg in spades
 High damage and high speed, long cooldown and low durability (rocket launcher type thing)

@@ -19,7 +19,7 @@ function _update60()
 end
 
 function _draw()
-    cls()
+    cls(6)
     game_state.state_draw();
 end
 
@@ -33,8 +33,8 @@ player = {
 player.parts.head = {
     hp = 10,
     def = 2,
-    dura = 10,
-    spd = 2,
+    dura = 5,
+    spd = 1,
     cool = 5,
     dmg = 6,
     hits = 1,
@@ -44,11 +44,11 @@ player.parts.head = {
 player.parts.rarm = {
     hp = 10,
     def = 2,
-    dura = 10,
-    spd = 2,
-    cool = 5,
+    dura = 6,
+    spd = 4,
+    cool = 3,
     dmg = 2,
-    hits = 4,
+    hits = 6,
     acc = 2,
     action = 'gattling'
 }
@@ -56,33 +56,33 @@ player.parts.larm = {
     hp = 10,
     def = 2,
     dura = 10,
-    spd = 2,
-    cool = 5,
+    spd = 5,
+    cool = 2,
     dmg = 15,
     hits = 1,
-    acc = 1,
+    acc = 3,
     action = 'slash'
 }
 player.parts.legs = {
     hp = 10,
     def = 2,
-    dura = 10,
+    dura = 20,
     spd = 2,
-    cool = 5,
+    cool = 2,
     dmg = 10,
-    hits = 1,
-    acc = 1,
+    hits = 2,
+    acc = 4,
     action = 'kick'
 }
 player.parts.frame = {
     hp = 10,
     def = 2,
-    dura = 10,
-    spd = 2,
-    cool = 5,
+    dura = 50,
+    spd = 1,
+    cool = 1,
     dmg = 0,
-    hits = 1,
-    acc = 1,
+    hits = 0,
+    acc = 5,
     action = 'wait'
 }
 
@@ -131,7 +131,7 @@ opponent.parts.larm = {
     cool = 5,
     dmg = 10,
     hits = 1,
-    acc = 1,
+    acc = 3,
     action = 'slash'
 }
 opponent.parts.legs = {
@@ -142,7 +142,7 @@ opponent.parts.legs = {
     cool = 5,
     dmg = 10,
     hits = 1,
-    acc = 1,
+    acc = 4,
     action = 'kick'
 }
 opponent.parts.frame = {
@@ -152,8 +152,8 @@ opponent.parts.frame = {
     spd = 2,
     cool = 5,
     dmg = 0,
-    hits = 1,
-    acc = 1,
+    hits = 0,
+    acc = 5,
     action = 'wait'
 }
 
@@ -174,16 +174,51 @@ combat_menu = {
 }
 
 function combat_menu:display()
-    local i=1
-    for key, value in pairs(player.parts) do
-        part = player.parts[key]
+    local pl = player.parts
+    --cross reference part name to a numerical index
+    local parti = {"head", "larm", "frame", "rarm", "legs"}
+    --iterate through each
+    for i=1,5 do
+        local part = parti[i]
+        print(pl[part].action, self.x_pos, self.y_pos+i*10, 1)
+    end
+    --cursor
+    spr(0, 0, self.y_pos+self.sel_index*10)
+    local part = parti[self.sel_index]
+    
+    --durability/charges
+    spr(4, self.x_pos+64, self.y_pos+ 20)
+    print(pl[part].dura .. " uses", self.x_pos+75, self.y_pos + 21)
 
-        
-        print(part.action, self.x_pos, self.y_pos+i*10, 7)
-        print(part.dmg .. " x " .. part.hits, self.x_pos + 50, self.y_pos+i*10, 8)
-        spr(0, 0, self.y_pos+self.sel_index*10)
-        i += 1
-        print(self.sel_index, 90, 10)
+    --damage
+    spr(3, self.x_pos+64, self.y_pos+ 10)
+    print(pl[part].dmg .. " x " .. pl[part].hits, self.x_pos+75, self.y_pos + 11)
+
+    --accuracy
+    for i=1,5 do
+        spr(2, self.x_pos+64, self.y_pos+ 30)
+        spr(16, self.x_pos+66+i*8, self.y_pos+ 30)
+        if pl[part].acc >= i then 
+            spr(17, self.x_pos+66+i*8, self.y_pos+ 30)
+        end
+    end
+
+    --speed
+    for i=1,5 do
+        spr(5, self.x_pos+64, self.y_pos+ 40)
+        spr(16, self.x_pos+66+i*8, self.y_pos+ 40)
+        if pl[part].spd >= i then 
+            spr(17, self.x_pos+66+i*8, self.y_pos+ 40)
+        end
+    end
+    
+    --cooldown
+    for i=1,5 do
+        spr(6, self.x_pos+64, self.y_pos+ 50)
+        spr(16, self.x_pos+66+i*8, self.y_pos+ 50)
+        if pl[part].cool >= i then 
+            spr(17, self.x_pos+66+i*8, self.y_pos+ 50)
+        end
     end
 end
 
@@ -206,7 +241,8 @@ function title.state_update()
 end
 
 function title.state_draw()
-    print("title draw")
+    print("title draw", 2,2,1)
+    spr(4, 60, 60)
 end
 
 --combat definitions--
@@ -219,7 +255,7 @@ function combat.state_update()
 end
 
 function combat.state_draw()
-    print("now we're in combat")
+    print("now we're in combat",2,2,1)
     combat_menu:display()
     player:hp_bar()
     
@@ -263,11 +299,18 @@ dummy_opp_queue = {
 
 
 __gfx__
-00220000000006660000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00222000000cc6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000922000007c6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00222000666666000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00220000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000666666000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000666000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000006660000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0022000000000666110c0110000c0000cccca9c000caa000ccccccc0000000000000000000000000000000000000000000000000000000000000000000000000
+00222000000cc60010cac01000ccc000c11aa9c00c100a00c1000ac0000000000000000000000000000000000000000000000000000000000000000000000000
+000922000007c6000c0a0c0000ccc000c1aa91c0c1000c900c10ac00000000000000000000000000000000000000000000000000000000000000000000000000
+0022200066666600caa9aac000cac000caa911c0c000c09000cac000000000000000000000000000000000000000000000000000000000000000000000000000
+00220000cccccc000c0a0c0010cac010caaaa9c0c00c00900c1a0c00000000000000000000000000000000000000000000000000000000000000000000000000
+000000006666660010cac01001111100c1aa91c0c0000090c10aa0c0000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000066600110c011000090000caa911c00c000c00c1aaaac0000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000006660000000000090000ca9cccc000ccc000ccccccc0000000000000000000000000000000000000000000000000000000000000000000000000
+00111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0155d100007cc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+15d0001007cccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1d00001007cccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1d0000100ccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0100010000ccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

@@ -4,7 +4,6 @@ __lua__
 
 game_states = {title, combat, pick_part}
 game_state = nil
-part_options = {"right arm", "left arm"}
 combat_manager = {
     player_queue = {},
     opp_queue = {}
@@ -33,47 +32,58 @@ player = {
 }
 player.parts.head = {
     hp = 10,
-    def = 2
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
     dmg = 6,
     hits = 1,
     acc = 5,
-    action = 'Laser Beam'
+    action = 'laser beam'
 }
 player.parts.rarm = {
     hp = 10,
-    def = 2
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
     dmg = 2,
     hits = 4,
     acc = 2,
-    action = 'Gattling'
+    action = 'gattling'
 }
 player.parts.larm = {
     hp = 10,
-    def = 2
+    def = 2,
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 15,
+    hits = 1,
+    acc = 1,
+    action = 'slash'
+}
+player.parts.legs = {
+    hp = 10,
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
     dmg = 10,
     hits = 1,
     acc = 1,
-    action = 'Slash'
+    action = 'kick'
 }
 player.parts.frame = {
     hp = 10,
-    def = 2
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
-    dmg = 10,
+    dmg = 0,
     hits = 1,
     acc = 1,
-    action = 'Wait'
+    action = 'wait'
 }
 
 function robo_update_stats (target)
@@ -86,8 +96,6 @@ function robo_update_stats (target)
     target.total_def /= 5
 end
 
-
-
 opponent = {
     parts = {},
     total_hp = 10,
@@ -95,47 +103,58 @@ opponent = {
 }
 opponent.parts.head = {
     hp = 10,
-    def = 2
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
     dmg = 6,
     hits = 1,
     acc = 5,
-    action = 'Laser Beam'
+    action = 'laser beam'
 }
 opponent.parts.rarm = {
     hp = 10,
-    def = 2
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
     dmg = 2,
     hits = 4,
     acc = 2,
-    action = 'Gattling'
+    action = 'gattling'
 }
 opponent.parts.larm = {
     hp = 10,
-    def = 2
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
     dmg = 10,
     hits = 1,
     acc = 1,
-    action = 'Slash'
+    action = 'slash'
+}
+opponent.parts.legs = {
+    hp = 10,
+    def = 2,
+    dura = 10,
+    spd = 2,
+    cool = 5,
+    dmg = 10,
+    hits = 1,
+    acc = 1,
+    action = 'kick'
 }
 opponent.parts.frame = {
     hp = 10,
-    def = 2
+    def = 2,
     dura = 10,
     spd = 2,
     cool = 5,
-    dmg = 10,
+    dmg = 0,
     hits = 1,
     acc = 1,
-    action = 'Wait'
+    action = 'wait'
 }
 
 function player:hp_bar()
@@ -154,14 +173,17 @@ combat_menu = {
     y_pos = 60
 }
 
-combat_menu.options = {
-    
-}
+function combat_menu:display()
+    local i=1
+    for key, value in pairs(player.parts) do
+        part = player.parts[key]
 
-function combat_menu.display(self)
-    for i=1,#self.options do
-        print(self.options[i], self.x_pos, self.y_pos+i*10)
+        
+        print(part.action, self.x_pos, self.y_pos+i*10, 7)
+        print(part.dmg .. " x " .. part.hits, self.x_pos + 50, self.y_pos+i*10, 8)
         spr(0, 0, self.y_pos+self.sel_index*10)
+        i += 1
+        print(self.sel_index, 90, 10)
     end
 end
 
@@ -171,7 +193,7 @@ function combat_menu.movecursor(self, direction)
         end
     end
     if direction == "down" then
-        if self.sel_index >= #self.options then self.sel_index = #self.options else self.sel_index += 1 
+        if self.sel_index >= 5 then self.sel_index = 5 else self.sel_index += 1 
         end
     end
 end

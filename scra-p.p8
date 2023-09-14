@@ -11,7 +11,7 @@ combat_manager = {
 
 function _init()
     game_state = title
-    init_combat_manager(dummy_play_queue,dummy_opp_queue)
+    reset_combat_manager()
 end
 
 function _update60()
@@ -21,6 +21,29 @@ end
 function _draw()
     cls(6)
     game_state.state_draw();
+    print(#combat_manager.opp_queue,100,10)
+    print(#combat_manager.player_queue,100,20)
+    print(opponent.total_hp, 100, 30)
+    print(opponent.current_hp, 100, 40)
+end
+
+function damage(target, dmg)
+    local d = dmg - target.total_def
+    if d < 0 then d = 0 end
+    target.current_hp -= d
+end
+
+function attack(self)
+    
+    local pass = 4
+    pass += self.acc
+
+    for i=1,self.hits do
+        local roll = flr(rnd(10))
+        if pass >= roll then
+            damage(opponent, self.dmg)
+        end
+    end
 end
 
 --Player--
@@ -39,8 +62,12 @@ player.parts.head = {
     dmg = 6,
     hits = 1,
     acc = 5,
-    action = 'laser beam'
+    name = 'laser beam',
+    target = 'opp',
+    action = attack
 }
+--player.parts.head.action = attack
+
 player.parts.rarm = {
     hp = 10,
     def = 2,
@@ -50,7 +77,9 @@ player.parts.rarm = {
     dmg = 2,
     hits = 6,
     acc = 2,
-    action = 'gattling'
+    name = 'gattling',
+    target = 'opp',
+    action = attack
 }
 player.parts.larm = {
     hp = 10,
@@ -61,7 +90,9 @@ player.parts.larm = {
     dmg = 15,
     hits = 1,
     acc = 3,
-    action = 'slash'
+    name = 'slash',
+    target = 'opp',
+    action = attack
 }
 player.parts.legs = {
     hp = 10,
@@ -72,7 +103,9 @@ player.parts.legs = {
     dmg = 10,
     hits = 2,
     acc = 4,
-    action = 'kick'
+    name = 'kick',
+    target = 'opp',
+    action = attack
 }
 player.parts.frame = {
     hp = 10,
@@ -83,7 +116,9 @@ player.parts.frame = {
     dmg = 0,
     hits = 0,
     acc = 5,
-    action = 'wait'
+    name = 'wait',
+    target = 'opp',
+    action = attack
 }
 
 function robo_update_stats (target)
@@ -98,8 +133,9 @@ end
 
 opponent = {
     parts = {},
-    total_hp = 10,
-    current_hp = 8,
+    total_def = 1,
+    total_hp = 50,
+    current_hp = 48,
 }
 opponent.parts.head = {
     hp = 10,
@@ -110,7 +146,9 @@ opponent.parts.head = {
     dmg = 6,
     hits = 1,
     acc = 5,
-    action = 'laser beam'
+    name = 'laser beam',
+    target = 'player',
+    action = attack
 }
 opponent.parts.rarm = {
     hp = 10,
@@ -121,7 +159,9 @@ opponent.parts.rarm = {
     dmg = 2,
     hits = 4,
     acc = 2,
-    action = 'gattling'
+    name = 'gattling',
+    target = 'player',
+    action = attack
 }
 opponent.parts.larm = {
     hp = 10,
@@ -132,7 +172,9 @@ opponent.parts.larm = {
     dmg = 10,
     hits = 1,
     acc = 3,
-    action = 'slash'
+    name = 'slash',
+    target = 'player',
+    action = attack
 }
 opponent.parts.legs = {
     hp = 10,
@@ -143,7 +185,9 @@ opponent.parts.legs = {
     dmg = 10,
     hits = 1,
     acc = 4,
-    action = 'kick'
+    name = 'kick',
+    target = 'player',
+    action = attack
 }
 opponent.parts.frame = {
     hp = 10,
@@ -154,7 +198,9 @@ opponent.parts.frame = {
     dmg = 0,
     hits = 0,
     acc = 5,
-    action = 'wait'
+    name = 'wait',
+    target = 'player',
+    action = attack
 }
 
 function player:hp_bar()
@@ -167,38 +213,38 @@ end
 
 
 --Combat Menu--
-combat_menu = {
+combat_manager = {
     sel_index = 1,
     x_pos = 8,
-    y_pos = 60
+    y_pos = 60,
+    pl = player.parts,
+    parti = {"head", "larm", "frame", "rarm", "legs"},
 }
 
-function combat_menu:display()
-    local pl = player.parts
-    --cross reference part name to a numerical index
-    local parti = {"head", "larm", "frame", "rarm", "legs"}
+function combat_manager:display()
     --iterate through each
     for i=1,5 do
-        local part = parti[i]
-        print(pl[part].action, self.x_pos, self.y_pos+i*10, 1)
+        local part = self.parti[i]
+        print(self.pl[part].name, self.x_pos, self.y_pos+i*10, 1)
     end
+
     --cursor
     spr(0, 0, self.y_pos+self.sel_index*10)
-    local part = parti[self.sel_index]
+    local part = self.parti[self.sel_index]
     
     --durability/charges
     spr(4, self.x_pos+64, self.y_pos+ 20)
-    print(pl[part].dura .. " uses", self.x_pos+75, self.y_pos + 21)
+    print(self.pl[part].dura .. " uses", self.x_pos+75, self.y_pos + 21)
 
     --damage
     spr(3, self.x_pos+64, self.y_pos+ 10)
-    print(pl[part].dmg .. " x " .. pl[part].hits, self.x_pos+75, self.y_pos + 11)
+    print(self.pl[part].dmg .. " x " .. self.pl[part].hits, self.x_pos+75, self.y_pos + 11)
 
     --accuracy
     for i=1,5 do
         spr(2, self.x_pos+64, self.y_pos+ 30)
         spr(16, self.x_pos+66+i*8, self.y_pos+ 30)
-        if pl[part].acc >= i then 
+        if self.pl[part].acc >= i then 
             spr(17, self.x_pos+66+i*8, self.y_pos+ 30)
         end
     end
@@ -207,7 +253,7 @@ function combat_menu:display()
     for i=1,5 do
         spr(5, self.x_pos+64, self.y_pos+ 40)
         spr(16, self.x_pos+66+i*8, self.y_pos+ 40)
-        if pl[part].spd >= i then 
+        if self.pl[part].spd >= i then 
             spr(17, self.x_pos+66+i*8, self.y_pos+ 40)
         end
     end
@@ -216,13 +262,13 @@ function combat_menu:display()
     for i=1,5 do
         spr(6, self.x_pos+64, self.y_pos+ 50)
         spr(16, self.x_pos+66+i*8, self.y_pos+ 50)
-        if pl[part].cool >= i then 
+        if self.pl[part].cool >= i then 
             spr(17, self.x_pos+66+i*8, self.y_pos+ 50)
         end
     end
 end
 
-function combat_menu.movecursor(self, direction)
+function combat_manager:movecursor(direction)
     if direction == "up" then
         if self.sel_index <= 1 then self.sel_index = 1 else self.sel_index -= 1
         end
@@ -231,6 +277,12 @@ function combat_menu.movecursor(self, direction)
         if self.sel_index >= 5 then self.sel_index = 5 else self.sel_index += 1 
         end
     end
+end
+
+function combat_manager:selected_part()
+    local index = self.parti[self.sel_index]
+    local part = self.pl[index]
+    return part
 end
 
 --title definitions--
@@ -249,46 +301,60 @@ end
 combat = {}
 
 function combat.state_update()
-    if btnp(2) then combat_menu:movecursor("up") end
-    if btnp(3) then combat_menu:movecursor("down") end
+
+    if btnp(2) then combat_manager:movecursor('up') end
+    if btnp(3) then combat_manager:movecursor('down') end
+    if btnp(4) then combat_manager:add_command('opp', combat_manager:selected_part()) end
     if btnp(5) then combat_manager:advance() end
 end
 
 function combat.state_draw()
     print("now we're in combat",2,2,1)
-    combat_menu:display()
+    combat_manager:display()
     player:hp_bar()
     
 end
 
-
 --Combat instructions--
-function init_combat_manager(play, opp)
-    add(combat_manager.player_queue, play)
-    add(combat_manager.opp_queue, opp)
+function reset_combat_manager()
+    combat_manager.player_queue = {}
+    combat_manager.opp_queue = {}
+    for i=1,9999 do
+        add(combat_manager.player_queue, 'empty')
+        add(combat_manager.opp_queue, 'empty')
+    end
+end
+
+function combat_manager:add_command(target,part)
+    if target == 'player' then add(combat_manager.player_queue, part, part.spd) end
+    if target == 'opp' then add(combat_manager.opp_queue, part, part.spd) end
 end
 
 function combat_manager:advance()
     play_act = self.player_queue[1]
-    play_act:action()
+    if play_act != 'empty' then
+        play_act.action()
+    end
     deli(self.player_queue, 1)
 
     opp_act = self.opp_queue[1]
-    opp_act:action(player)
-    deli(self.player_queue, 1)
+    if opp_act != 'empty' then
+        opp_act:action()
+    end
+    deli(self.opp_queue, 1)
 end
 
-dummy_play_queue = {
-    dmg = 5,
-    hits = 2,
-    targ = opponent,
-    speed = 3,
-    cooldown = 3,
-    action = function() opponent.current_hp -= 1 end
-}
+-- dummy_play_queue = {
+--     dmg = 5,
+--     hits = 2,
+--     targ = opponent,
+--     speed = 3,
+--     cooldown = 3,
+--     action = function() opponent.current_hp -= 1 end
+-- }
 
 dummy_opp_queue = {
-    dmg = 2,
+    dmg = 1,
     hits = 2,
     targ = player,
     speed = 3,

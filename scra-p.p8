@@ -33,7 +33,7 @@ function damage(target, dmg)
     target.current_hp -= d
 end
 
-function attack(self)
+function attack(self, target)
     
     local pass = 4
     pass += self.acc
@@ -63,7 +63,8 @@ player.parts.head = {
     hits = 1,
     acc = 5,
     name = 'laser beam',
-    target = 'opp',
+    target = opponent,
+    ready = true,
     action = attack
 }
 --player.parts.head.action = attack
@@ -78,7 +79,8 @@ player.parts.rarm = {
     hits = 6,
     acc = 2,
     name = 'gattling',
-    target = 'opp',
+    target = opponent,
+    ready = true,
     action = attack
 }
 player.parts.larm = {
@@ -91,7 +93,8 @@ player.parts.larm = {
     hits = 1,
     acc = 3,
     name = 'slash',
-    target = 'opp',
+    target = opponent,
+    ready = true,
     action = attack
 }
 player.parts.legs = {
@@ -104,7 +107,8 @@ player.parts.legs = {
     hits = 2,
     acc = 4,
     name = 'kick',
-    target = 'opp',
+    target = opponent,
+    ready = true,
     action = attack
 }
 player.parts.frame = {
@@ -112,12 +116,13 @@ player.parts.frame = {
     def = 2,
     dura = 50,
     spd = 1,
-    cool = 1,
+    cool = 0,
     dmg = 0,
     hits = 0,
     acc = 5,
     name = 'wait',
-    target = 'opp',
+    target = opponent,
+    ready = true,
     action = attack
 }
 
@@ -147,7 +152,8 @@ opponent.parts.head = {
     hits = 1,
     acc = 5,
     name = 'laser beam',
-    target = 'player',
+    target = player,
+    ready = true,
     action = attack
 }
 opponent.parts.rarm = {
@@ -160,7 +166,8 @@ opponent.parts.rarm = {
     hits = 4,
     acc = 2,
     name = 'gattling',
-    target = 'player',
+    target = player,
+    ready = true,
     action = attack
 }
 opponent.parts.larm = {
@@ -173,7 +180,8 @@ opponent.parts.larm = {
     hits = 1,
     acc = 3,
     name = 'slash',
-    target = 'player',
+    target = player,
+    ready = true,
     action = attack
 }
 opponent.parts.legs = {
@@ -186,7 +194,8 @@ opponent.parts.legs = {
     hits = 1,
     acc = 4,
     name = 'kick',
-    target = 'player',
+    target = player,
+    ready = true,
     action = attack
 }
 opponent.parts.frame = {
@@ -194,12 +203,13 @@ opponent.parts.frame = {
     def = 2,
     dura = 10,
     spd = 2,
-    cool = 5,
+    cool = 0,
     dmg = 0,
     hits = 0,
     acc = 5,
     name = 'wait',
-    target = 'player',
+    target = player,
+    ready = true,
     action = attack
 }
 
@@ -225,7 +235,9 @@ function combat_manager:display()
     --iterate through each
     for i=1,5 do
         local part = self.parti[i]
-        print(self.pl[part].name, self.x_pos, self.y_pos+i*10, 1)
+        local color = 1
+        if not self.pl[part].ready then color = 13 end
+        print(self.pl[part].name, self.x_pos, self.y_pos+i*10, color)
     end
 
     --cursor
@@ -304,7 +316,11 @@ function combat.state_update()
 
     if btnp(2) then combat_manager:movecursor('up') end
     if btnp(3) then combat_manager:movecursor('down') end
-    if btnp(4) then combat_manager:add_command('opp', combat_manager:selected_part()) end
+    if btnp(4) then 
+        if not combat_manager:selected_part().ready then return end
+        combat_manager:add_command(opponent, combat_manager:selected_part()) 
+        combat_manager:add_cooldown(player, combat_manager:selected_part())
+    end
     if btnp(5) then combat_manager:advance() end
 end
 
@@ -326,20 +342,39 @@ function reset_combat_manager()
 end
 
 function combat_manager:add_command(target,part)
-    if target == 'player' then add(combat_manager.player_queue, part, part.spd) end
-    if target == 'opp' then add(combat_manager.opp_queue, part, part.spd) end
+    if target == player then 
+        add(combat_manager.player_queue, part, part.spd)
+        part.ready = false
+    end
+    if target == opponent then 
+        add(combat_manager.opp_queue, part, part.spd)
+        part.ready = false 
+    end
+end
+
+function combat_manager:add_cooldown(target, part)
+    refresh = {
+        action = function() part.ready = true end
+    }
+
+    if target == player then 
+        add(combat_manager.player_queue, refresh, part.spd + part.cool) 
+    end
+    if target == opponent then 
+        add(combat_manager.opp_queue, refresh, part.spd + part.cool) 
+    end
 end
 
 function combat_manager:advance()
     play_act = self.player_queue[1]
     if play_act != 'empty' then
-        play_act.action()
+        play_act.action(player)
     end
     deli(self.player_queue, 1)
 
     opp_act = self.opp_queue[1]
     if opp_act != 'empty' then
-        opp_act:action()
+        opp_act:action(opponent)
     end
     deli(self.opp_queue, 1)
 end

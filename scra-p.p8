@@ -11,6 +11,8 @@ combat_manager = {
     opp_queue = {}
 }
 
+parti = {"head", "larm", "frame", "rarm", "legs"}
+
 function _init()
     printh("\n\n\n\n\n Fresh Run")
     game_state = title
@@ -219,7 +221,7 @@ opponent.parts.frame = {
     dura = 10,
     spd = 2,
     cool = 0,
-    cool_left = 0
+    cool_left = 0,
     dmg = 0,
     hits = 0,
     acc = 5,
@@ -239,7 +241,6 @@ end
 
 function opponent_random_action()
     local o = opponent.parts
-    local parti = {"head", "larm", "frame", "rarm", "legs"}
     local o_ready = {}
     for i=1,5 do
         local part = o[parti[i]]
@@ -257,14 +258,13 @@ combat_manager = {
     sel_index = 1,
     x_pos = 8,
     y_pos = 60,
-    pl = player.parts,
-    parti = {"head", "larm", "frame", "rarm", "legs"},
+    pl = player.parts
 }
 
 function combat_manager:display()
     --iterate through each
     for i=1,5 do
-        local part = self.parti[i]
+        local part = parti[i]
         local color = 1
         if not self.pl[part].ready then color = 13 end
         print(self.pl[part].name, self.x_pos, self.y_pos+i*10, color)
@@ -272,7 +272,7 @@ function combat_manager:display()
 
     --cursor
     spr(0, 0, self.y_pos+self.sel_index*10)
-    local part = self.parti[self.sel_index]
+    local part = parti[self.sel_index]
     
     --durability/charges
     spr(4, self.x_pos+64, self.y_pos+ 20)
@@ -322,7 +322,7 @@ function combat_manager:movecursor(direction)
 end
 
 function combat_manager:selected_part()
-    local index = self.parti[self.sel_index]
+    local index = parti[self.sel_index]
     local part = self.pl[index]
     return part
 end
@@ -349,7 +349,7 @@ function combat.state_update()
         if btnp(4) then 
             if not combat_manager:selected_part().ready then return end
             combat_manager:add_command(combat_manager:selected_part()) 
-            combat_manager:add_cooldown(player, combat_manager:selected_part())
+            combat_manager:add_cooldown(combat_manager:selected_part())
             local moved = 0
             repeat
                 moved = combat_manager:advance()
@@ -380,13 +380,9 @@ function reset_combat_manager()
     robo_update_stats(opponent)
     combat_manager.player_queue = {}
     combat_manager.opp_queue = {}
-    combat_manager.player_cools = {}
-    combat_manager.opp_cools = {}
     for i=1,9999 do
         add(combat_manager.player_queue, 'empty')
         add(combat_manager.opp_queue, 'empty')
-        add(combat_manager.player_cools, 'empty')
-        add(combat_manager.opp_cools, 'empty')
     end
 end
 
@@ -403,17 +399,9 @@ function combat_manager:add_command(part)
     end
 end
 
-function combat_manager:add_cooldown(target, part)
-    refresh = {
-        action = function() part.ready = true end
-    }
-
-    if target == player then 
-        add(combat_manager.player_cools, refresh, part.spd + part.cool + 1) 
-    end
-    if target == opponent then 
-        add(combat_manager.opp_cools, refresh, part.spd + part.cool + 1) 
-    end
+function combat_manager:add_cooldown(part)
+    part.ready = false
+    part.cool_left = part.cool + part.spd
 end
 
 function combat_manager:advance()
@@ -429,17 +417,16 @@ function combat_manager:advance()
     end
     deli(self.opp_queue, 1)
 
-    local play_cool = self.player_cools[1]
-    if play_cool != 'empty' then
-        play_cool:action(player)
+    for i=1,5 do
+        if player.parts[parti[i]].cool_left > 0 then
+            player.parts[parti[i]].cool_left -= 1
+        else player.parts[parti[i]].cool_left = 0
+        end
+        
+        if player.parts[parti[i]].cool_left == 0 then
+            player.parts[parti[i]].ready = true
+        end
     end
-    deli(self.player_cools, 1)
-
-    local opp_cool = self.opp_cools[1]
-    if opp_cool != 'empty' then
-        opp_cool:action(opponent)
-    end
-    deli(self.opp_cools, 1)
 
     if play_act == 'empty' and opp_act == 'empty' then
         return 0
@@ -457,14 +444,14 @@ end
 --     action = function() opponent.current_hp -= 1 end
 -- }
 
-dummy_opp_queue = {
-    dmg = 1,
-    hits = 2,
-    targ = player,
-    speed = 3,
-    cooldown = 3,
-    action = function(self,targ) targ.current_hp -= self.dmg end
-}
+-- dummy_opp_queue = {
+--     dmg = 1,
+--     hits = 2,
+--     targ = player,
+--     speed = 3,
+--     cooldown = 3,
+--     action = function(self,targ) targ.current_hp -= self.dmg end
+-- }
 
 
 

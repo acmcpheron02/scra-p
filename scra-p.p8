@@ -2,6 +2,8 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
+#include pancelor_debug.p8
+
 game_states = {title, combat, pick_part}
 game_state = nil
 combat_manager = {
@@ -10,6 +12,7 @@ combat_manager = {
 }
 
 function _init()
+    printh("\n\n\n\n\n Fresh Run")
     game_state = title
     reset_combat_manager()
 end
@@ -51,7 +54,8 @@ player = {
     parts = {},
     total_def = 6,
     total_hp = 10,
-    current_hp = 6
+    current_hp = 6,
+    ready = true
 }
 player.parts.head = {
     hp = 10,
@@ -59,11 +63,12 @@ player.parts.head = {
     dura = 5,
     spd = 1,
     cool = 5,
+    cool_left = 0,
     dmg = 6,
     hits = 1,
     acc = 5,
     name = 'laser beam',
-    target = opponent,
+    target = 'opponent',
     ready = true,
     action = attack
 }
@@ -75,11 +80,12 @@ player.parts.rarm = {
     dura = 6,
     spd = 4,
     cool = 3,
+    cool_left = 0,
     dmg = 2,
     hits = 6,
     acc = 2,
     name = 'gattling',
-    target = opponent,
+    target = 'opponent',
     ready = true,
     action = attack
 }
@@ -89,11 +95,12 @@ player.parts.larm = {
     dura = 10,
     spd = 5,
     cool = 2,
+    cool_left = 0,
     dmg = 15,
     hits = 1,
     acc = 3,
     name = 'slash',
-    target = opponent,
+    target = 'opponent',
     ready = true,
     action = attack
 }
@@ -103,11 +110,12 @@ player.parts.legs = {
     dura = 20,
     spd = 2,
     cool = 2,
+    cool_left = 0,
     dmg = 10,
     hits = 2,
     acc = 4,
     name = 'kick',
-    target = opponent,
+    target = 'opponent',
     ready = true,
     action = attack
 }
@@ -117,11 +125,12 @@ player.parts.frame = {
     dura = 50,
     spd = 1,
     cool = 0,
+    cool_left = 0,
     dmg = 0,
     hits = 0,
     acc = 5,
     name = 'wait',
-    target = opponent,
+    target = 'opponent',
     ready = true,
     action = attack
 }
@@ -133,6 +142,7 @@ function robo_update_stats (target)
         target.total_hp += target.parts[key].hp
         target.total_def += target.parts[key].def
     end
+    target.current_hp = target.total_hp
     target.total_def /= 5
 end
 
@@ -141,6 +151,7 @@ opponent = {
     total_def = 1,
     total_hp = 50,
     current_hp = 48,
+    ready = true
 }
 opponent.parts.head = {
     hp = 10,
@@ -148,11 +159,12 @@ opponent.parts.head = {
     dura = 10,
     spd = 2,
     cool = 5,
+    cool_left = 0,
     dmg = 6,
     hits = 1,
     acc = 5,
     name = 'laser beam',
-    target = player,
+    target = 'player',
     ready = true,
     action = attack
 }
@@ -162,11 +174,12 @@ opponent.parts.rarm = {
     dura = 10,
     spd = 2,
     cool = 5,
+    cool_left = 0,
     dmg = 2,
     hits = 4,
     acc = 2,
     name = 'gattling',
-    target = player,
+    target = 'player',
     ready = true,
     action = attack
 }
@@ -176,11 +189,12 @@ opponent.parts.larm = {
     dura = 10,
     spd = 2,
     cool = 5,
+    cool_left = 0,
     dmg = 10,
     hits = 1,
     acc = 3,
     name = 'slash',
-    target = player,
+    target = 'player',
     ready = true,
     action = attack
 }
@@ -190,11 +204,12 @@ opponent.parts.legs = {
     dura = 10,
     spd = 2,
     cool = 5,
+    cool_left = 0,
     dmg = 10,
     hits = 1,
     acc = 4,
     name = 'kick',
-    target = player,
+    target = 'player',
     ready = true,
     action = attack
 }
@@ -204,11 +219,12 @@ opponent.parts.frame = {
     dura = 10,
     spd = 2,
     cool = 0,
+    cool_left = 0
     dmg = 0,
     hits = 0,
     acc = 5,
     name = 'wait',
-    target = player,
+    target = 'player',
     ready = true,
     action = attack
 }
@@ -221,6 +237,20 @@ function player:hp_bar()
     rectfill(x1,y1,x1+pct*(x2-x1),y2,12)
 end
 
+function opponent_random_action()
+    local o = opponent.parts
+    local parti = {"head", "larm", "frame", "rarm", "legs"}
+    local o_ready = {}
+    for i=1,5 do
+        local part = o[parti[i]]
+        if part.ready then
+            add(o_ready, part)
+        end
+    end
+    printh(#o_ready)
+    --qq(o_ready)
+    return o_ready[flr(rnd(#o_ready)) + 1]
+end
 
 --Combat Menu--
 combat_manager = {
@@ -301,7 +331,7 @@ end
 title = {}
 
 function title.state_update()
-    if btnp(5) then game_state = combat end
+    if btnp(4) then game_state = combat end
 end
 
 function title.state_draw()
@@ -313,41 +343,62 @@ end
 combat = {}
 
 function combat.state_update()
-
-    if btnp(2) then combat_manager:movecursor('up') end
-    if btnp(3) then combat_manager:movecursor('down') end
-    if btnp(4) then 
-        if not combat_manager:selected_part().ready then return end
-        combat_manager:add_command(opponent, combat_manager:selected_part()) 
-        combat_manager:add_cooldown(player, combat_manager:selected_part())
+    if player.ready then
+        if btnp(2) then combat_manager:movecursor('up') end
+        if btnp(3) then combat_manager:movecursor('down') end
+        if btnp(4) then 
+            if not combat_manager:selected_part().ready then return end
+            combat_manager:add_command(combat_manager:selected_part()) 
+            combat_manager:add_cooldown(player, combat_manager:selected_part())
+            local moved = 0
+            repeat
+                moved = combat_manager:advance()
+                printh("function output: " .. moved)
+            until moved == 1
+        end
+        if btnp(5) then 
+            combat_manager:advance()
+        end
     end
-    if btnp(5) then combat_manager:advance() end
+    if opponent.ready then
+        combat_manager:add_command(opponent_random_action())
+        opponent.ready = false
+    end
 end
 
 function combat.state_draw()
     print("now we're in combat",2,2,1)
     combat_manager:display()
     player:hp_bar()
+    print(combat_manager:selected_part().dmg,3,30)
     
 end
 
 --Combat instructions--
 function reset_combat_manager()
+    robo_update_stats(player)
+    robo_update_stats(opponent)
     combat_manager.player_queue = {}
     combat_manager.opp_queue = {}
+    combat_manager.player_cools = {}
+    combat_manager.opp_cools = {}
     for i=1,9999 do
         add(combat_manager.player_queue, 'empty')
         add(combat_manager.opp_queue, 'empty')
+        add(combat_manager.player_cools, 'empty')
+        add(combat_manager.opp_cools, 'empty')
     end
 end
 
-function combat_manager:add_command(target,part)
-    if target == player then 
-        add(combat_manager.player_queue, part, part.spd)
+function combat_manager:add_command(part)
+    local tar 
+    tar = part.target
+    if tar == 'player' then
+        add(combat_manager.player_queue, part, part.spd + 1)
         part.ready = false
     end
-    if target == opponent then 
-        add(combat_manager.opp_queue, part, part.spd)
+    if tar == 'opponent' then 
+        add(combat_manager.opp_queue, part, part.spd + 1)
         part.ready = false 
     end
 end
@@ -358,25 +409,43 @@ function combat_manager:add_cooldown(target, part)
     }
 
     if target == player then 
-        add(combat_manager.player_queue, refresh, part.spd + part.cool) 
+        add(combat_manager.player_cools, refresh, part.spd + part.cool + 1) 
     end
     if target == opponent then 
-        add(combat_manager.opp_queue, refresh, part.spd + part.cool) 
+        add(combat_manager.opp_cools, refresh, part.spd + part.cool + 1) 
     end
 end
 
 function combat_manager:advance()
-    play_act = self.player_queue[1]
+    local play_act = self.player_queue[1]
     if play_act != 'empty' then
-        play_act.action(player)
+        play_act:action(player)
     end
     deli(self.player_queue, 1)
 
-    opp_act = self.opp_queue[1]
+    local opp_act = self.opp_queue[1]
     if opp_act != 'empty' then
         opp_act:action(opponent)
     end
     deli(self.opp_queue, 1)
+
+    local play_cool = self.player_cools[1]
+    if play_cool != 'empty' then
+        play_cool:action(player)
+    end
+    deli(self.player_cools, 1)
+
+    local opp_cool = self.opp_cools[1]
+    if opp_cool != 'empty' then
+        opp_cool:action(opponent)
+    end
+    deli(self.opp_cools, 1)
+
+    if play_act == 'empty' and opp_act == 'empty' then
+        return 0
+    else 
+        return 1
+    end
 end
 
 -- dummy_play_queue = {
@@ -400,14 +469,14 @@ dummy_opp_queue = {
 
 
 __gfx__
-0022000000000666110c0110000c0000cccca9c00011100accccccc0000000000000000000000000000000000000000000000000000000000000000000000000
-00222000000cc60010cac01000ccc000c11aa9c001ccc1a0c1000ac0000000000000000000000000000000000000000000000000000000000000000000000000
-000922000007c6000c0a0c0000ccc000c1aa91c01cddda100c10ac00000000000000000000000000000000000000000000000000000000000000000000000000
-0022200066666600caa9aac000cac000caa911c0cdddadc000cac000000000000000000000000000000000000000000000000000000000000000000000000000
+0022000000000111110c0110000c0000cccca9c00011100accccccc0000000000000000000000000000000000000000000000000000000000000000000000000
+00222000000cc10010cac01000ccc000c11aa9c001ccc1a0c1000ac0000000000000000000000000000000000000000000000000000000000000000000000000
+000922000007c1000c0a0c0000ccc000c1aa91c01cddda100c10ac00000000000000000000000000000000000000000000000000000000000000000000000000
+0022200011111100caa9aac000cac000caa911c0cdddadc000cac000000000000000000000000000000000000000000000000000000000000000000000000000
 00220000cccccc000c0a0c0010cac010caaaa9c0cddaddc00c1a0c00000000000000000000000000000000000000000000000000000000000000000000000000
-000000006666660010cac01001111100c1aa91c0cdd7ddc0c10aa0c0000000000000000000000000000000000000000000000000000000000000000000000000
-0000000000066600110c011000090000caa911c0ccd7dcc0c1aaaac0000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000006660000000000090000ca9cccc00ccccc00ccccccc0000000000000000000000000000000000000000000000000000000000000000000000000
+000000001111110010cac01001111100c1aa91c0cdd7ddc0c10aa0c0000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000011100110c011000090000caa911c0ccd7dcc0c1aaaac0000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000001110000000000090000ca9cccc00ccccc00ccccccc0000000000000000000000000000000000000000000000000000000000000000000000000
 00111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0155d100007cc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 15d0001007cccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

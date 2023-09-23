@@ -48,3 +48,17 @@ Okay, combat step--------------
         
 
         
+09/23 refactoring plans
+
+Problem: Opponent and Player are taking slightly different routes to accomplish the same things. Abstracting the queues in passive voice (opponent receives instead of player does) isn't helping anything either.
+
+Solutions:
+Encapsulate functions better and make them take the robots as parameters
+Combat manager takes details and asks for actions, rather than relying on the player object to know when to supply actions.
+
+Break down phases more concretely and organize them accordingly
+    1: Process action queues
+    2: Check for Ready robots
+    3: Request actions
+    4: Add actions
+

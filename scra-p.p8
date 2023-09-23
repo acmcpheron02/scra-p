@@ -28,7 +28,7 @@ function _draw()
     game_state.state_draw();
     print(#combat_manager.opp_queue,100,10)
     print(#combat_manager.player_queue,100,20)
-    print(opponent.total_hp, 100, 30)
+    print(player.current_hp, 100, 30)
     print(opponent.current_hp, 100, 40)
 end
 
@@ -46,7 +46,7 @@ function attack(self, target)
     for i=1,self.hits do
         local roll = flr(rnd(10))
         if pass >= roll then
-            damage(opponent, self.dmg)
+            damage(target, self.dmg)
         end
     end
 end
@@ -57,7 +57,8 @@ player = {
     total_def = 6,
     total_hp = 10,
     current_hp = 6,
-    ready = true
+    ready = true,
+    ready_in = 0
 }
 player.parts.head = {
     hp = 10,
@@ -153,7 +154,8 @@ opponent = {
     total_def = 1,
     total_hp = 50,
     current_hp = 48,
-    ready = true
+    ready = true,
+    ready_in = 0
 }
 opponent.parts.head = {
     hp = 10,
@@ -350,15 +352,10 @@ function combat.state_update()
             if not combat_manager:selected_part().ready then return end
             combat_manager:add_command(combat_manager:selected_part()) 
             combat_manager:add_cooldown(combat_manager:selected_part())
-            local moved = 0
-            repeat
-                moved = combat_manager:advance()
-                printh("function output: " .. moved)
-            until moved == 1
         end
-        if btnp(5) then 
-            combat_manager:advance()
-        end
+    end
+    if btnp(5) then 
+        combat_manager:advance()
     end
     if opponent.ready then
         combat_manager:add_command(opponent_random_action())
@@ -390,11 +387,11 @@ function combat_manager:add_command(part)
     local tar 
     tar = part.target
     if tar == 'player' then
-        add(combat_manager.player_queue, part, part.spd + 1)
+        add(combat_manager.player_queue, part, part.spd)
         part.ready = false
     end
     if tar == 'opponent' then 
-        add(combat_manager.opp_queue, part, part.spd + 1)
+        add(combat_manager.opp_queue, part, part.spd)
         part.ready = false 
     end
 end
@@ -402,6 +399,9 @@ end
 function combat_manager:add_cooldown(part)
     part.ready = false
     part.cool_left = part.cool + part.spd
+
+    player.ready = false
+    player.ready_in = part.spd
 end
 
 function combat_manager:advance()
@@ -417,6 +417,25 @@ function combat_manager:advance()
     end
     deli(self.opp_queue, 1)
 
+    if player.ready_in > 0 then
+        player.ready_in -= 1
+    else player.ready_in = 0
+    end
+
+    if player.ready_in == 0 then
+        player.ready = true 
+    end
+
+
+    if opponent.ready_in > 0 then
+        opponent.ready_in -= 1
+    else opponent.ready_in = 0
+    end
+
+    if opponent.ready_in == 0 then
+        opponent.ready = true 
+    end
+
     for i=1,5 do
         if player.parts[parti[i]].cool_left > 0 then
             player.parts[parti[i]].cool_left -= 1
@@ -428,11 +447,24 @@ function combat_manager:advance()
         end
     end
 
-    if play_act == 'empty' and opp_act == 'empty' then
-        return 0
-    else 
-        return 1
+    for i=1,5 do
+        if opponent.parts[parti[i]].cool_left > 0 then
+            opponent.parts[parti[i]].cool_left -= 1
+        else opponent.parts[parti[i]].cool_left = 0
+        end
+        
+        if opponent.parts[parti[i]].cool_left == 0 then
+            opponent.parts[parti[i]].ready = true
+        end
     end
+    
+    printh('player recieves')
+    ?pq(play_act)
+
+    printh('opp receieves')
+    ?pq(opp_act)
+
+    printh('--------')
 end
 
 -- dummy_play_queue = {

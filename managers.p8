@@ -2,11 +2,12 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
---Combat Manager--
+--Combat Manager
 cm = {
     pl = player, 
     en = opponent,
-    sel = 
+    sel_index = 1,
+    sel = nil
 }
 
 function cm:new(o,pl,en)
@@ -18,49 +19,34 @@ function cm:new(o,pl,en)
     self.en = en
 end
 
-function cm:populate_menu()
-for i=1,5 do
-    local part = parti[i]
-    local color = 7
-    if not self.pl[part].ready then color = 9 end
-    print(self.pl[part].name, self.x_pos, self.y_pos+i*10, color)
-    end
-end
-
-
 function cm:move_cursor(direction)
-    if direction == "up" then
-        if self.sel_index <= 1 then self.sel_index = 1 else self.sel_index -= 1
+    if btnp(2) then
+        if self.sel_index <= 1 then self.sel_index = 1 
+        else self.sel_index -= 1
         end
     end
-    if direction == "down" then
-        if self.sel_index >= 5 then self.sel_index = 5 else self.sel_index += 1 
+    if btnp(3) then
+        if self.sel_index >= 5 then self.sel_index = 5 
+        else self.sel_index += 1 
         end
     end
 end
-
-function cm:selected()
-    local index = parti[self.sel_index]
-    local part = self.pl[index]
-    return part
-end
-
 
 function cm:update()
     if who_turn() == "player" then
-        cm:pl_turn()
+        self:pl_turn()
     elseif who_turn() == "enemy" then
-        cm:en_turn()
+        self:en_turn()
     else
-        cm:turn_advance()
+        self:turn_advance()
     end
 end
     
 function cm:pl_turn()
-    cm:menu_nav()
+    self:menu_nav()
     if btn(4) then 
         select.action()
-        cm:reset_tc(cm.pl)
+        self:reset_tc(cm.pl)
     end
 end
 

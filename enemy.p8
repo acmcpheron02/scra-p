@@ -100,3 +100,10 @@ function opponent_random_action()
     return o_ready[flr(rnd(#o_ready)) + 1]
 end
 
+function opponent:hp_bar()
+    local x1, y1, x2, y2 = 121, 11, 71, 16
+    local pct = self.current_hp / self.total_hp
+    spr(18, x1-1, y1-1)
+    rectfill(x1,y1,x2,y2,13)
+    rectfill(x1,y1,x1+pct*(x2-x1),y2,12)
+end

@@ -6,7 +6,7 @@ __lua__
 cm = {
     pl = player, 
     en = opponent,
-    select
+    sel = 
 }
 
 function cm:new(o,pl,en)
@@ -18,11 +18,38 @@ function cm:new(o,pl,en)
     self.en = en
 end
 
+function cm:populate_menu()
+for i=1,5 do
+    local part = parti[i]
+    local color = 7
+    if not self.pl[part].ready then color = 9 end
+    print(self.pl[part].name, self.x_pos, self.y_pos+i*10, color)
+    end
+end
+
+
+function cm:move_cursor(direction)
+    if direction == "up" then
+        if self.sel_index <= 1 then self.sel_index = 1 else self.sel_index -= 1
+        end
+    end
+    if direction == "down" then
+        if self.sel_index >= 5 then self.sel_index = 5 else self.sel_index += 1 
+        end
+    end
+end
+
+function cm:selected()
+    local index = parti[self.sel_index]
+    local part = self.pl[index]
+    return part
+end
+
+
 function cm:update()
-    local who_turn()
     if who_turn() == "player" then
         cm:pl_turn()
-    else if who_turn() == "enemy"
+    elseif who_turn() == "enemy" then
         cm:en_turn()
     else
         cm:turn_advance()
@@ -40,9 +67,10 @@ end
 function cm:who_turn()
     if self.pl.tc >= 50 then
         return "player"
-    else if self.en.tc >= 50 then
+    elseif self.en.tc >= 50 then
         return "enemy"
     else return "none"
+    end
 end
 
 function cm:turn_advance()
@@ -52,4 +80,8 @@ end
 
 function cm:reset_tc(t)
     t.tc = t.speed
+end
+
+function cm:menu_nav()
+
 end

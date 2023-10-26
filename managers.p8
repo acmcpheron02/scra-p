@@ -2,12 +2,27 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
+--[[
+Combat manager needs the following menu options
+
+Attack
+Skills
+Stats
+
+Attack simply performs an attack with no
+further interactions
+
+Skills brings up a sub menu
+
+Stats moves to different screen entirely
+
+--]]
+
 --Combat Manager
 cm = {
     pl = player, 
     en = opponent,
-    sel_index = 1,
-    sel = nil
+    sel_index = 1
 }
 
 function cm:new(o,pl,en)
@@ -17,6 +32,16 @@ function cm:new(o,pl,en)
     
     self.pl = pl
     self.en = en
+end
+
+function cm:update()
+    if who_turn() == "player" then
+        self:pl_turn()
+    elseif who_turn() == "enemy" then
+        self:en_turn()
+    else
+        self:turn_advance()
+    end
 end
 
 function cm:move_cursor(direction)
@@ -32,14 +57,8 @@ function cm:move_cursor(direction)
     end
 end
 
-function cm:update()
-    if who_turn() == "player" then
-        self:pl_turn()
-    elseif who_turn() == "enemy" then
-        self:en_turn()
-    else
-        self:turn_advance()
-    end
+function cm:submit()
+    if self.sel_index == 1 then self.pl.attack() end
 end
     
 function cm:pl_turn()

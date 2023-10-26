@@ -3,8 +3,8 @@ version 39
 __lua__
 
 #include pancelor_debug.p8
-#include func.p8
-#include player.p8
+--#include func.p8
+#include playerv2.p8
 #include enemy.p8
 #include managers.p8
 #include ui.p8
@@ -13,7 +13,7 @@ game_states = {title, combat}
 game_state = nil
 
 --definitions
-parti = {"head", "larm", "rarm", "legs", "frame"}
+parti = { "frame", "head", "larm", "rarm", "legs"}
 
 function _init()
     printh("\n\n Fresh Run")

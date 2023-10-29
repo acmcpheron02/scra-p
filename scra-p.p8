@@ -3,9 +3,8 @@ version 39
 __lua__
 
 #include pancelor_debug.p8
---#include func.p8
-#include playerv2.p8
-#include enemyv2.p8
+#include player.p8
+#include enemy.p8
 #include managers.p8
 #include ui.p8
 

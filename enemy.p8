@@ -2,108 +2,74 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
-opponent = {
+enemy = {
     parts = {},
-    total_def = 1,
-    total_hp = 50,
-    current_hp = 48,
-    ready = true,
-    ready_in = 0
-}
-opponent.parts.head = {
-    hp = 10,
-    def = 2,
-    dura = 10,
-    spd = 2,
-    cool = 5,
-    cool_left = 0,
-    dmg = 6,
-    hits = 1,
-    acc = 5,
-    name = 'laser beam',
-    target = 'player',
-    ready = true,
-    action = attack
-}
-opponent.parts.rarm = {
-    hp = 10,
-    def = 2,
-    dura = 10,
-    spd = 2,
-    cool = 5,
-    cool_left = 0,
-    dmg = 2,
-    hits = 4,
-    acc = 2,
-    name = 'gattling',
-    target = 'player',
-    ready = true,
-    action = attack
-}
-opponent.parts.larm = {
-    hp = 10,
-    def = 2,
-    dura = 10,
-    spd = 2,
-    cool = 5,
-    cool_left = 0,
-    dmg = 10,
-    hits = 1,
-    acc = 3,
-    name = 'slash',
-    target = 'player',
-    ready = true,
-    action = attack
-}
-opponent.parts.legs = {
-    hp = 10,
-    def = 2,
-    dura = 10,
-    spd = 2,
-    cool = 5,
-    cool_left = 0,
-    dmg = 10,
-    hits = 1,
-    acc = 4,
-    name = 'kick',
-    target = 'player',
-    ready = true,
-    action = attack
-}
-opponent.parts.frame = {
-    hp = 10,
-    def = 2,
-    dura = 10,
-    spd = 2,
-    cool = 0,
-    cool_left = 0,
-    dmg = 0,
-    hits = 0,
-    acc = 5,
-    name = 'wait',
-    target = 'player',
-    ready = true,
-    action = attack
+    hp = 0,
+    str = 0,
+    def = 0,
+    spd = 0,
+    current_hp = 0,
+    tc = 0,
+    attacks = {}
 }
 
-function opponent_random_action()
-    local o = opponent.parts
-    local o_ready = {}
-    for i=1,5 do
-        local part = o[parti[i]]
-        if part.ready then
-            add(o_ready, part)
+enemy.parts.frame = {
+    hp = 80,
+    str = 4,
+    def = 1,
+    spd = 3
+}
+
+enemy.parts.head = {
+    hp = 25,
+    str = 0,
+    def = 1,
+    spd = 0
+}
+
+enemy.parts.larm = {
+    hp = 0,
+    str = 4,
+    def = 3,
+    spd = 0
+}
+
+enemy.parts.rarm = {
+    hp = 0,
+    str = 8,
+    def = 0,
+    spd = 8,
+    pwr = 100,
+    hits = 1
+}
+
+enemy.parts.legs =
+{
+    hp = 0,
+    str = 8,
+    def = 0,
+    spd = 8
+}
+
+function enemy:robo_update_stats()
+    for key, value in pairs(self.parts) do
+        local part = self.parts[key]
+        self.hp += part.hp
+        self.str += part.str
+        self.def += part.def
+        self.spd += part.spd
+        if part.pwr != nil then
+            for i=1,part.hits do
+                add(self.attacks, part.pwr)
+            end
         end
     end
-    printh(#o_ready)
-    --qq(o_ready)
-    return o_ready[flr(rnd(#o_ready)) + 1]
+    self.current_hp = self.hp
+    self.tc = self.spd
 end
 
-function opponent:hp_bar()
-    local x1, y1, x2, y2 = 121, 11, 71, 16
-    local pct = self.current_hp / self.total_hp
-    spr(18, x1-1, y1-1)
-    rectfill(x1,y1,x2,y2,13)
-    rectfill(x1,y1,x1+pct*(x2-x1),y2,12)
+function enemy:attack()
+    for i=1,#self.attacks do
+        self.opp.current_hp -= (self.attacks[i]/100 * self.str) 
+    end
 end

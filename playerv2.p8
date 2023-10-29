@@ -14,7 +14,7 @@ player = {
 }
 
 player.parts.frame = {
-    hp = 30,
+    hp = 100,
     str = 7,
     def = 2,
     spd = 5
@@ -59,17 +59,17 @@ function player:robo_update_stats()
         self.def += part.def
         self.spd += part.spd
         if part.pwr != nil then
-            printh("parts triggered")
             for i=1,part.hits do
                 add(self.attacks, part.pwr)
-                printh(#self.attacks)
             end
         end
     end
+    self.current_hp = self.hp
+    self.tc = self.spd
 end
 
 function player:attack()
     for i=1,#self.attacks do
-        self.opp.current_hp -= (self.attacks[i] * self.str) 
+        self.opp.current_hp -= (self.attacks[i]/100 * self.str) 
     end
 end

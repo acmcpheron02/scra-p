@@ -72,6 +72,14 @@ function cm:pl_turn()
     end
 end
 
+function cm:en_turn()
+    local r = rnd(10)
+    if r <= 10 then
+        self.en:attack()
+        self:reset_tc(cm.en)
+    end
+end
+
 function cm:who_turn()
     if self.pl.tc >= 50 then
         return "player"
@@ -87,5 +95,5 @@ function cm:turn_advance()
 end
 
 function cm:reset_tc(t)
-    t.tc = t.speed
+    t.tc = t.spd
 end

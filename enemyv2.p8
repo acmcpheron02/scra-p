@@ -14,7 +14,7 @@ enemy = {
 }
 
 enemy.parts.frame = {
-    hp = 40,
+    hp = 80,
     str = 4,
     def = 1,
     spd = 3
@@ -64,10 +64,12 @@ function enemy:robo_update_stats()
             end
         end
     end
+    self.current_hp = self.hp
+    self.tc = self.spd
 end
 
 function enemy:attack()
     for i=1,#self.attacks do
-        self.opp.current_hp -= (self.attacks[i] * self.str) 
+        self.opp.current_hp -= (self.attacks[i]/100 * self.str) 
     end
 end

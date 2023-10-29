@@ -27,7 +27,14 @@ function title_ui()
 end
 
 function combat_ui()
+    --static
     print("attack",8,8,6)
     print("skills",8,16,6)
+    
+    --dynamic
     spr(0,0,cm.sel_index*8)
+    print("player tc: " .. cm.pl.tc, 8, 24, 6)
+    print("enemy  tc: " .. cm.en.tc, 8, 30, 6)
+    print("player hp: " .. cm.pl.current_hp, 8, 36, 6)
+    print("enemy  hp: " .. cm.en.current_hp, 8, 42, 6)
 end

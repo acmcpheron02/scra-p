@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
-player = {
+enemy = {
     parts = {},
     hp = 0,
     str = 0,
@@ -13,28 +13,28 @@ player = {
     attacks = {}
 }
 
-player.parts.frame = {
-    hp = 30,
-    str = 7,
-    def = 2,
-    spd = 5
+enemy.parts.frame = {
+    hp = 40,
+    str = 4,
+    def = 1,
+    spd = 3
 }
 
-player.parts.head = {
+enemy.parts.head = {
     hp = 25,
     str = 0,
     def = 1,
     spd = 0
 }
 
-player.parts.larm = {
+enemy.parts.larm = {
     hp = 0,
     str = 4,
     def = 3,
     spd = 0
 }
 
-player.parts.rarm = {
+enemy.parts.rarm = {
     hp = 0,
     str = 8,
     def = 0,
@@ -43,7 +43,7 @@ player.parts.rarm = {
     hits = 1
 }
 
-player.parts.legs =
+enemy.parts.legs =
 {
     hp = 0,
     str = 8,
@@ -51,7 +51,7 @@ player.parts.legs =
     spd = 8
 }
 
-function player:robo_update_stats()
+function enemy:robo_update_stats()
     for key, value in pairs(self.parts) do
         local part = self.parts[key]
         self.hp += part.hp
@@ -59,16 +59,14 @@ function player:robo_update_stats()
         self.def += part.def
         self.spd += part.spd
         if part.pwr != nil then
-            printh("parts triggered")
             for i=1,part.hits do
                 add(self.attacks, part.pwr)
-                printh(#self.attacks)
             end
         end
     end
 end
 
-function player:attack()
+function enemy:attack()
     for i=1,#self.attacks do
         self.opp.current_hp -= (self.attacks[i] * self.str) 
     end

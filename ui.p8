@@ -27,27 +27,7 @@ function title_ui()
 end
 
 function combat_ui()
-    combat_manager:display()
-    player:hp_bar()
-    opponent:hp_bar()
-    print("sCRA-p", 9, 3, 7)
-    print("enemy", 100, 3, 7)
-    display_elog(3,22,124,62)
-    if player.current_hp <= 0 then
-        rectfill(0,0,128,128,6)
-        print("congrats, you died!",4,24,0)
-        print("if this game were completed",4,44,0)
-        print("this is when you'd start over",4,54,0)
-        print("the game is not done though-",4,84,0)
-        print("refresh the page to try again!",4,94,0)
-    end
-    if opponent.current_hp <= 0 then
-        rectfill(0,0,128,128,6)
-        print("congrats, you won!",4,24,0)
-        print("if this game were completed",4,44,0)
-        print("you would absorb a part",4,54,0)
-        print("from your fallen opponent.",4,64,0)
-        print("the game is not done though-",4,84,0)
-        print("so you can't. sorry. =(",4,94,0)
-    end
+    print("attack",8,8,6)
+    print("skills",8,16,6)
+    spr(0,0,cm.sel_index*8)
 end

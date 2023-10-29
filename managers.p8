@@ -21,7 +21,7 @@ Stats moves to different screen entirely
 --Combat Manager
 cm = {
     pl = player, 
-    en = opponent,
+    en = enemy,
     sel_index = 1
 }
 
@@ -32,12 +32,15 @@ function cm:new(o,pl,en)
     
     self.pl = pl
     self.en = en
+
+    pl.opp = en
+    en.opp = pl
 end
 
 function cm:update()
-    if who_turn() == "player" then
+    if self:who_turn() == "player" then
         self:pl_turn()
-    elseif who_turn() == "enemy" then
+    elseif self:who_turn() == "enemy" then
         self:en_turn()
     else
         self:turn_advance()
@@ -51,20 +54,20 @@ function cm:move_cursor(direction)
         end
     end
     if btnp(3) then
-        if self.sel_index >= 5 then self.sel_index = 5 
+        if self.sel_index >= 3 then self.sel_index = 3
         else self.sel_index += 1 
         end
     end
 end
 
 function cm:submit()
-    if self.sel_index == 1 then self.pl.attack() end
+    if self.sel_index == 1 then self.pl:attack() end
 end
     
 function cm:pl_turn()
-    self:menu_nav()
+    self:move_cursor()
     if btn(4) then 
-        select.action()
+        self:submit()
         self:reset_tc(cm.pl)
     end
 end
@@ -85,8 +88,4 @@ end
 
 function cm:reset_tc(t)
     t.tc = t.speed
-end
-
-function cm:menu_nav()
-
 end

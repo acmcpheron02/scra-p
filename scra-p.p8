@@ -5,7 +5,7 @@ __lua__
 #include pancelor_debug.p8
 --#include func.p8
 #include playerv2.p8
-#include enemy.p8
+#include enemyv2.p8
 #include managers.p8
 #include ui.p8
 
@@ -32,7 +32,7 @@ end
 title = {}
 
 function title.state_update()
-    if btnp(4) then game_state = combat end
+    if btnp(4) then combat.init() end
 end
 
 function title.state_draw()
@@ -43,34 +43,16 @@ end
 --combat definitions--
 combat = {}
 
+function combat.init() 
+    player:robo_update_stats()
+    enemy:robo_update_stats()
+    cm:new(cm, player, enemy)
+    game_state = combat
+end
+
 function combat.state_update()
-    if player.current_hp <= 0 or opponent.current_hp <= 0 then
-        player.ready = false
-    end 
-    if player.ready then
-        if btnp(2) then combat_manager:movecursor('up') end
-        if btnp(3) then combat_manager:movecursor('down') end
-        if btnp(4) then 
-            printh("made it to point a")
-            if not combat_manager:selected_part().ready then return end
-            combat_manager:add_command(combat_manager:selected_part())
-            printh("made it to point b")
-            combat_manager:add_cooldown(combat_manager:selected_part())
-            printh("made it to point c")
-            while player.ready_in > 0 do
-                combat_manager:advance()
-            end
-        end
-    end
-    -- if btnp(5) then 
-    --     combat_manager:advance()
-    --     add_elog("manual advance")
-    -- end
-    if opponent.ready then
-        combat_manager:add_command(opponent_random_action())
-        opponent.ready = false
-        printh("made it to point d")
-    end
+    cm:update()
+    
 end
 
 function combat.state_draw()

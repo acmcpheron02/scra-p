@@ -81,9 +81,9 @@ function cm:en_turn()
 end
 
 function cm:who_turn()
-    if self.pl.tc >= 50 then
+    if self.pl.tc >= 75 then
         return "player"
-    elseif self.en.tc >= 50 then
+    elseif self.en.tc >= 75 then
         return "enemy"
     else return "none"
     end

@@ -30,6 +30,8 @@ function combat_ui()
     --static
     print("attack",8,8,6)
     print("skills",8,16,6)
+
+    player:sprites()
     
     --dynamic
     spr(0,0,cm.sel_index*8)

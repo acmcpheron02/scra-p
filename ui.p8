@@ -40,3 +40,4 @@ function combat_ui()
     print("player hp: " .. cm.pl.current_hp, 8, 36, 6)
     print("enemy  hp: " .. cm.en.current_hp, 8, 42, 6)
 end
+

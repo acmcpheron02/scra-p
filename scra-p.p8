@@ -36,19 +36,28 @@ function title.state_update()
 end
 
 function title.state_draw()
-    cls()
+    cls(1)
     --title_ui()
     local frame = pdepot.frame1
     local head = pdepot.head1
+    local larm = pdepot.arm1
+    local rarm = pdepot.arm1
     local posx = 64
     local posy = 52
     -- sspr(frame.s_pos[1],frame.s_pos[2],frame.s_pos[3],frame.s_pos[4],posx,posy)
     -- pset(frame.joints.head[1]+posx-frame.s_pos[1], frame.joints.head[2]+posy-frame.s_pos[2], 7)
     -- pset(frame.joints.arm[1]+posx-frame.s_pos[1], frame.joints.arm[2]+posy-frame.s_pos[2], 7)
     -- sspr(head.s_pos[1],head.s_pos[2],head.s_pos[3],head.s_pos[4],posx+,posy)
-    sspr(frame.s_pos[1],frame.s_pos[2],frame.s_pos[3],frame.s_pos[4],posx-p_xoff(frame),posy-p_yoff(frame))
-    sspr(head.s_pos[1],head.s_pos[2],head.s_pos[3],head.s_pos[4],posx - j_xoff(frame, 'head')-p_xoff(head),posy - j_yoff(frame, "head")-p_yoff(head))
-    pset(64, 52, 7)
+    -- sspr(frame.s_pos[1],frame.s_pos[2],frame.s_pos[3],frame.s_pos[4],posx-p_xoff(frame),posy-p_yoff(frame))
+    -- sspr(head.s_pos[1],head.s_pos[2],head.s_pos[3],head.s_pos[4],posx - j_xoff(frame, 'head')-p_xoff(head),posy - j_yoff(frame, "head")-p_yoff(head))
+    -- pset(64, 52, 7)
+    p_spr(larm, 58, 63, false)
+    p_spr(rarm, 70, 63, true)
+    p_spr(frame, 64, 70, false)
+    p_spr(frame, 64, 70, true)
+    p_spr(head, 64, 60, false)
+    p_spr(head, 64, 60, true)
+    --p_spr(rarm, 64, 60, true)
 
 end
 
@@ -97,8 +106,8 @@ __gfx__
 00000000004444440000000000004444000004444444444400000000444444aa00000000000333bb330000000000000003777300000000000000000000000000
 00000000004444440000000000000444000000444444444400000000044444440000000000000333300000000000000000000000000000000000000000000000
 00000000000044440000000000004444000000044444444400000000044444440000000000000003300000000000000000000000000000000000000000000000
-000000222000000e0002222222000000222000000000000000000000000000000000000000000ccd000000000000000000000000000000000000000000000000
-00000222220000ee02eeeeeee22200002e220000000000000222222222222222000000000000cccd000000000000000000000000000000000000000000000000
+000000000000000e0002222222000000222000000000000000000000000000000000000000000ccd000000000000000000000000000000000000000000000000
+00000222200000ee02eeeeeee22200002e220000000000000222222222222222000000000000cccd000000000000000000000000000000000000000000000000
 000022222222eeee00022eeeee2220002ee220000002222202eeeeeeeeee2222000000000000ccdc000000000000000000000000000000000000000000000000
 0000222222eeeeee0000002eee2222222ee222000022eeee02e22222eeeeeee200000000000cccdc000000000000000000000000000000000000000000000000
 0002222222eeeeee0000000222222e222eee2222222eeeee02eeeee2e22ee2e200000000000cccdc000000000000000c00000000000000000000000000000000

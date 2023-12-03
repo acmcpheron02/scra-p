@@ -17,7 +17,13 @@ pdepot = {
         slot = 'head',
         s_pos = {2, 8, 14, 16},
         anchor = {15, 23}, --sprite sheet location
-    }
+    },
+    arm1 = {
+        slot = 'head',
+        s_pos = {66, 8, 22, 16},
+        anchor = {87, 8}, --sprite sheet location
+    },
+
 }
 
 function p_xoff(part)
@@ -34,4 +40,14 @@ end
 
 function j_yoff(part, ref)
     return part.anchor[2] - part.joints[ref][2]
+end
+
+function p_spr(part, x, y, flipx)
+    local p = part
+    if flipx == false then
+        sspr(p.s_pos[1],p.s_pos[2],p.s_pos[3],p.s_pos[4],x-p_xoff(p),y-p_yoff(p),p.s_pos[3],p.s_pos[4],flipx)
+    end
+    if flipx == true then
+        sspr(p.s_pos[1],p.s_pos[2],p.s_pos[3],p.s_pos[4],x-p.s_pos[3]+p.anchor[1],y-p_yoff(p),p.s_pos[3],p.s_pos[4],flipx)
+    end
 end

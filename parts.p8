@@ -23,7 +23,11 @@ pdepot = {
         s_pos = {66, 8, 22, 16},
         anchor = {87, 8}, --sprite sheet location
     },
-
+    leg1 = {
+        slot = 'head',
+        s_pos = {64, 24, 16, 32},
+        anchor = {79, 24}, --sprite sheet location
+    }
 }
 
 function p_xoff(part)
@@ -48,6 +52,6 @@ function p_spr(part, x, y, flipx)
         sspr(p.s_pos[1],p.s_pos[2],p.s_pos[3],p.s_pos[4],x-p_xoff(p),y-p_yoff(p),p.s_pos[3],p.s_pos[4],flipx)
     end
     if flipx == true then
-        sspr(p.s_pos[1],p.s_pos[2],p.s_pos[3],p.s_pos[4],x-p.s_pos[3]+p.anchor[1],y-p_yoff(p),p.s_pos[3],p.s_pos[4],flipx)
+        sspr(p.s_pos[1],p.s_pos[2],p.s_pos[3],p.s_pos[4],x+p.s_pos[1]+p.s_pos[3]-p.anchor[1],y-p_yoff(p),p.s_pos[3],p.s_pos[4],flipx)
     end
 end

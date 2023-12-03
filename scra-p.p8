@@ -45,13 +45,7 @@ function title.state_draw()
     local leg = pdepot.leg1
     local posx = 64
     local posy = 52
-    -- sspr(frame.s_pos[1],frame.s_pos[2],frame.s_pos[3],frame.s_pos[4],posx,posy)
-    -- pset(frame.joints.head[1]+posx-frame.s_pos[1], frame.joints.head[2]+posy-frame.s_pos[2], 7)
-    -- pset(frame.joints.arm[1]+posx-frame.s_pos[1], frame.joints.arm[2]+posy-frame.s_pos[2], 7)
-    -- sspr(head.s_pos[1],head.s_pos[2],head.s_pos[3],head.s_pos[4],posx+,posy)
-    -- sspr(frame.s_pos[1],frame.s_pos[2],frame.s_pos[3],frame.s_pos[4],posx-p_xoff(frame),posy-p_yoff(frame))
-    -- sspr(head.s_pos[1],head.s_pos[2],head.s_pos[3],head.s_pos[4],posx - j_xoff(frame, 'head')-p_xoff(head),posy - j_yoff(frame, "head")-p_yoff(head))
-    -- pset(64, 52, 7)
+
     p_spr(leg, 91, 40, false)
     p_spr(leg, 97, 40, true)
     p_spr(larm, 88, 23, false)

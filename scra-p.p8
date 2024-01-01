@@ -40,26 +40,27 @@ end
 function title.state_draw()
     cls(1)
     --title_ui()
-    local frame = pdepot.frame1
-    local head = pdepot.head1
-    local larm = pdepot.arm1
-    local rarm = pdepot.arm1
-    local legs = pdepot.legs1
-    local posx = 90
-    local posy = 52
+    -- local frame = pdepot.frame1
+    -- local head = pdepot.head1
+    -- local larm = pdepot.arm1
+    -- local rarm = pdepot.arm1
+    -- local legs = pdepot.legs1
+    -- local posx = 90
+    -- local posy = 52
 
-    p_spr(legs, posx, 40, false)
-    p_spr(legs, posx, 40, true)
-    p_spr(larm, posx, 23, false)
-    p_spr(rarm, posx, 23, true)
-    --p_spr(frame, 94, 30, false)
-    --p_spr(frame, 94, 30, true)
-    p_spr(head, posx, 21, false)
-    p_spr(head, posx, 21, true)
+    -- p_spr(legs, posx, 40, false)
+    -- p_spr(legs, posx, 40, true)
+    -- p_spr(larm, posx, 23, false)
+    -- p_spr(rarm, posx, 23, true)
+    -- --p_spr(frame, 94, 30, false)
+    -- --p_spr(frame, 94, 30, true)
+    -- p_spr(head, posx, 21, false)
+    -- p_spr(head, posx, 21, true)
 
-    sspr(0,0,8,8,8,8,8,8,false)
-    sspr(0,0,8,8,8,10,-8,8,false)
+    -- sspr(0,0,8,8,8,8,8,8,false)
+    -- sspr(0,0,8,8,8,10,-8,8,false)
 
+    player:sprites()
 end
 
 --combat definitions--

@@ -68,15 +68,11 @@ player.parts.legs =
 }
 
 function player:set_sprites()
-    pq(player.parts.larm)
     local p_sp = bake_sprites('frame1', 'head1', 'arm1', 'arm1', 'legs1')
-    pq(p_sp)
     for key, value in pairs(self.parts) do
         printh("reached "..key)
-        pq(p_sp[key])
         self.parts[key].spr = p_sp[key]
     end
-    pq(player.parts.larm)
 end
 
 function player:robo_update_stats()
@@ -103,10 +99,15 @@ function player:attack()
 end
 
 function player:sprites()
+    printh("sprites func reached")
     local ps = self.parts
-    for k, v in pairs(ps) do
-        sspr(v.spri[1],v.spri[2],v.spri[3],v.spri[4],
-        v.r_pos[1] + self.pos[1],
-        v.r_pos[2] + self.pos[2])
+    x, y = 64,64
+    p_spr(ps.frame.spr, x, y, false)
+    p_spr(ps.frame.spr, x, y, true)
+    for key, value in pairs(ps) do
+        if key.slot != "frame" then
+            p_spr(ps[key].spr, x, y, false)
+            p_spr(ps[key].spr, x, y, true)
+        end
     end
 end

@@ -10,7 +10,7 @@ pdepot = {
         joints = {
             head = { 15, 24 },
             arm = { 7, 31 },
-            leg = { 9, 50 }
+            legs = { 9, 50 }
         }
     },
     head1 = {
@@ -24,7 +24,7 @@ pdepot = {
         anchor = { 87, 8 } --sprite sheet location
     },
     legs1 = {
-        slot = 'leg',
+        slot = 'legs',
         s_pos = { 64, 24, 16, 32 },
         anchor = { 79, 24 } --sprite sheet location
     }
@@ -45,13 +45,13 @@ function bake_sprites(frame, head, larm, rarm, legs)
 
     printh(#p_sp)
 
-    for i=1,#p_sp do
-        p_sp[i].px_off =  set_p_xoff(p_sp[i])
-        p_sp[i].py_off =  set_p_yoff(p_sp[i])
+    for key, value in pairs(p_sp) do
+        p_sp[key].px_off =  set_p_xoff(p_sp[key])
+        p_sp[key].py_off =  set_p_yoff(p_sp[key])
 
-        if i>1 then
-            p_sp[i].px_off += set_j_xoff(p_sp[1], p_sp[i].slot)
-            p_sp[i].py_off += set_j_yoff(p_sp[1], p_sp[i].slot) 
+        if value.slot != "frame" then
+            p_sp[key].px_off += set_j_xoff(p_sp["frame"], p_sp[key].slot)
+            p_sp[key].py_off += set_j_yoff(p_sp["frame"], p_sp[key].slot)
         end
     end
 
@@ -91,20 +91,20 @@ end
 
 function p_spr(part, x, y, flipx)
     local p = part
-    local sl = p.slot
+    pq(p)
     if flipx == false then
         sspr(
             p.s_pos[1],
             p.s_pos[2], 
             p.s_pos[3], 
             p.s_pos[4], 
-            x + set_p_xoff(p) + set_j_xoff(pdepot.frame1, sl), 
-            y + set_p_yoff(p), 
+            x + p.px_off,
+            y + p.py_off, 
             p.s_pos[3], 
             p.s_pos[4], 
             flipx
         )
-        print(x + set_p_xoff(p) .. "_" .. p.slot .. sl)
+        -- print(x + set_p_xoff(p) .. "_" .. p.slot .. sl)
     end
     if flipx == true then
         --to understand 5th arg: (s_pos - anchor) = pixels away from top left corner. Results in negative number
@@ -116,12 +116,12 @@ function p_spr(part, x, y, flipx)
             p.s_pos[2],
             p.s_pos[3], 
             p.s_pos[4],
-            x - set_p_xoff(p) - set_j_xoff(pdepot.frame1, sl),
-            y + set_p_yoff(p), 
+            x - p.px_off,
+            y + p.py_off, 
             -p.s_pos[3], 
             p.s_pos[4], 
             false
         )
-        print(x + set_p_xoff(p) + p.s_pos[3] .. " " .. p.slot)
+        -- print(x + set_p_xoff(p) + p.s_pos[3] .. " " .. p.slot)
     end
 end

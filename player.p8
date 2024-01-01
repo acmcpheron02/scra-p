@@ -20,7 +20,8 @@ player.parts.frame = {
     def = 2,
     spd = 5,
     spri = {16,16,16,16},
-    r_pos = {0,0}
+    r_pos = {0,0},
+    spr = {}
 }
 
 player.parts.head = {
@@ -29,7 +30,8 @@ player.parts.head = {
     def = 1,
     spd = 0,
     spri = {0,16,16,16},
-    r_pos = {0,-16}
+    r_pos = {0,-16},
+    spr = {}
 }
 
 player.parts.larm = {
@@ -38,7 +40,8 @@ player.parts.larm = {
     def = 3,
     spd = 0,
     spri = {48,16,16,16},
-    r_pos = {-16,0}
+    r_pos = {-16,0},
+    spr = {}
 }
 
 player.parts.rarm = {
@@ -49,7 +52,8 @@ player.parts.rarm = {
     pwr = 100,
     hits = 1,
     spri = {64,16,16,16},
-    r_pos = {16,-8}
+    r_pos = {16,-8},
+    spr = {}
 }
 
 player.parts.legs =
@@ -59,8 +63,21 @@ player.parts.legs =
     def = 0,
     spd = 8,
     spri = {32,16,16,16},
-    r_pos = {0,16}
+    r_pos = {0,16},
+    spr = {}
 }
+
+function player:set_sprites()
+    pq(player.parts.larm)
+    local p_sp = bake_sprites('frame1', 'head1', 'arm1', 'arm1', 'legs1')
+    pq(p_sp)
+    for key, value in pairs(self.parts) do
+        printh("reached "..key)
+        pq(p_sp[key])
+        self.parts[key].spr = p_sp[key]
+    end
+    pq(player.parts.larm)
+end
 
 function player:robo_update_stats()
     for key, value in pairs(self.parts) do

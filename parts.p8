@@ -5,28 +5,30 @@ __lua__
 part_depot = {
     frame1 = {
         slot = 'frame',
-        s_pos = { 2, 24, 14, 28 },
+        s_pos = { 2, 24, 27, 28 },
         anchor = { 15, 34 },
         joints = {
             head = { 15, 24 },
-            arm = { 7, 29 },
-            legs = { 9, 48 }
+            larm = { 7,  29 },
+            rarm = { 23, 29 },
+            lleg = { 9,  48 },
+            rleg = { 21, 48 }
         }
     },
     head1 = {
         slot = 'head',
-        s_pos = { 2, 8, 14, 16 },
+        s_pos = { 2, 8, 27, 16 },
         anchor = { 15, 23 } --sprite sheet location
     },
     arm1 = {
         slot = 'arm',
         s_pos = { 66, 8, 22, 16 },
-        anchor = { 87, 8 } --sprite sheet location
+        anchor = { 85, 10 } --sprite sheet location
     },
-    legs1 = {
-        slot = 'legs',
+    leg1 = {
+        slot = 'leg',
         s_pos = { 64, 24, 16, 32 },
-        anchor = { 79, 24 } --sprite sheet location
+        anchor = { 78, 26 } --sprite sheet location
     }
 }
 
@@ -39,15 +41,18 @@ function bake_sprites(frame, head, larm, rarm, legs)
     p_sp.head = deepcopy(part_depot[head])
     p_sp.larm = deepcopy(part_depot[larm])
     p_sp.rarm = deepcopy(part_depot[rarm])
-    p_sp.legs = deepcopy(part_depot[legs])
+    p_sp.lleg = deepcopy(part_depot[legs])
+    p_sp.rleg = deepcopy(part_depot[legs])
 
     for key, value in pairs(p_sp) do
         p_sp[key].px_off =  set_part_xoffset(p_sp[key])
         p_sp[key].py_off =  set_part_yoffset(p_sp[key])
 
         if value.slot != "frame" then
-            p_sp[key].px_off += set_joint_xoffset(p_sp["frame"], p_sp[key].slot)
-            p_sp[key].py_off += set_joint_yoffset(p_sp["frame"], p_sp[key].slot)
+            printh(value.slot)
+            printh(key)
+            p_sp[key].px_off += set_joint_xoffset(p_sp["frame"], key)
+            p_sp[key].py_off += set_joint_yoffset(p_sp["frame"], key)
         end
     end
 
@@ -56,19 +61,19 @@ end
 
 
 function set_part_xoffset(part)
-    return part.s_pos[1] - part.anchor[1] - 1
+    return part.s_pos[1] - part.anchor[1]
 end
 
 function set_part_yoffset(part)
-    return part.s_pos[2] - part.anchor[2] - 1
+    return part.s_pos[2] - part.anchor[2]
 end
 
 function set_joint_xoffset(frame, ref)
-    return (frame.s_pos[1] - frame.anchor[1] - 1) - (frame.s_pos[1] - frame.joints[ref][1] - 1)
+    return (frame.s_pos[1] - frame.anchor[1]) - (frame.s_pos[1] - frame.joints[ref][1])
 end
 
 function set_joint_yoffset(frame, ref)
-    return (frame.s_pos[2] - frame.anchor[2] - 1) - (frame.s_pos[2] - frame.joints[ref][2] - 1)
+    return (frame.s_pos[2] - frame.anchor[2]) - (frame.s_pos[2] - frame.joints[ref][2])
 end
 
 function part_sprite(part, x, y, flipx)

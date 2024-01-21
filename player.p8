@@ -56,7 +56,18 @@ player.parts.rarm = {
     spr = {}
 }
 
-player.parts.legs =
+player.parts.lleg =
+{
+    hp = 0,
+    str = 8,
+    def = 0,
+    spd = 8,
+    spri = {32,16,16,16},
+    r_pos = {0,16},
+    spr = {}
+}
+
+player.parts.rleg =
 {
     hp = 0,
     str = 8,
@@ -68,7 +79,7 @@ player.parts.legs =
 }
 
 function player:set_sprites()
-    local p_sp = bake_sprites('frame1', 'head1', 'arm1', 'arm1', 'legs1')
+    local p_sp = bake_sprites('frame1', 'head1', 'arm1', 'arm1', 'leg1', 'leg1')
     for key, value in pairs(self.parts) do
         self.parts[key].spr = p_sp[key]
     end
@@ -101,11 +112,10 @@ function player:sprites()
     local ps = self.parts
     x, y = 95,30
     part_sprite(ps.frame.spr, x, y, false)
-    part_sprite(ps.frame.spr, x, y, true)
     for key, value in pairs(ps) do
         if key.slot != "frame" then
             part_sprite(ps[key].spr, x, y, false)
-            part_sprite(ps[key].spr, x, y, true)
+            -- part_sprite(ps[key].spr, x, y, true)
         end
     end
 
@@ -114,7 +124,7 @@ function player:sprites()
     part_sprite(ps.frame.spr, x, y, true)
     for key, value in pairs(ps) do
         if key.slot != "frame" then
-            part_sprite(ps[key].spr, x, y, false)
+            --part_sprite(ps[key].spr, x, y, false)
             part_sprite(ps[key].spr, x, y, true)
         end
     end

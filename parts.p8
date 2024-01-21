@@ -8,11 +8,11 @@ part_depot = {
         s_pos = { 2, 24, 27, 28 },
         anchor = { 15, 34 },
         joints = {
-            head = { 15, 24 },
+            head = { 14, 26 },
             larm = { 7,  29 },
             rarm = { 23, 29 },
-            lleg = { 9,  48 },
-            rleg = { 21, 48 }
+            lleg = { 14,  44 },
+            rleg = { 27, 44 }
         }
     },
     head1 = {
@@ -49,8 +49,6 @@ function bake_sprites(frame, head, larm, rarm, legs)
         p_sp[key].py_off =  set_part_yoffset(p_sp[key])
 
         if value.slot != "frame" then
-            printh(value.slot)
-            printh(key)
             p_sp[key].px_off += set_joint_xoffset(p_sp["frame"], key)
             p_sp[key].py_off += set_joint_yoffset(p_sp["frame"], key)
         end

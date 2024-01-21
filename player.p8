@@ -110,7 +110,7 @@ end
 
 function player:sprites()
     local ps = self.parts
-    x, y = 95,30
+    x, y = 105,30
     part_sprite(ps.frame.spr, x, y, false)
     for key, value in pairs(ps) do
         if key.slot != "frame" then
@@ -119,8 +119,7 @@ function player:sprites()
         end
     end
 
-    x, y = 33,90
-    part_sprite(ps.frame.spr, x, y, false)
+    x, y = 22,85
     part_sprite(ps.frame.spr, x, y, true)
     for key, value in pairs(ps) do
         if key.slot != "frame" then

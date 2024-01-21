@@ -2,15 +2,15 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
-pdepot = {
+part_depot = {
     frame1 = {
         slot = 'frame',
         s_pos = { 2, 24, 14, 28 },
         anchor = { 15, 34 },
         joints = {
             head = { 15, 24 },
-            arm = { 7, 31 },
-            legs = { 9, 50 }
+            arm = { 7, 29 },
+            legs = { 9, 48 }
         }
     },
     head1 = {
@@ -30,68 +30,49 @@ pdepot = {
     }
 }
 
-
-
 function bake_sprites(frame, head, larm, rarm, legs)
     -- create an array of sprite details, then store offset values on them
 
     local p_sp = {}
 
-    p_sp.frame = deepcopy(pdepot[frame])
-    p_sp.head = deepcopy(pdepot[head])
-    p_sp.larm = deepcopy(pdepot[larm])
-    p_sp.rarm = deepcopy(pdepot[rarm])
-    p_sp.legs = deepcopy(pdepot[legs])
-
-    printh(#p_sp)
+    p_sp.frame = deepcopy(part_depot[frame])
+    p_sp.head = deepcopy(part_depot[head])
+    p_sp.larm = deepcopy(part_depot[larm])
+    p_sp.rarm = deepcopy(part_depot[rarm])
+    p_sp.legs = deepcopy(part_depot[legs])
 
     for key, value in pairs(p_sp) do
-        p_sp[key].px_off =  set_p_xoff(p_sp[key])
-        p_sp[key].py_off =  set_p_yoff(p_sp[key])
+        p_sp[key].px_off =  set_part_xoffset(p_sp[key])
+        p_sp[key].py_off =  set_part_yoffset(p_sp[key])
 
         if value.slot != "frame" then
-            p_sp[key].px_off += set_j_xoff(p_sp["frame"], p_sp[key].slot)
-            p_sp[key].py_off += set_j_yoff(p_sp["frame"], p_sp[key].slot)
+            p_sp[key].px_off += set_joint_xoffset(p_sp["frame"], p_sp[key].slot)
+            p_sp[key].py_off += set_joint_yoffset(p_sp["frame"], p_sp[key].slot)
         end
     end
 
     return p_sp
 end
 
-function deepcopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key)] = deepcopy(orig_value)
-        end
-        setmetatable(copy, deepcopy(getmetatable(orig)))
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
-end
 
-function set_p_xoff(part)
+function set_part_xoffset(part)
     return part.s_pos[1] - part.anchor[1] - 1
 end
 
-function set_p_yoff(part)
+function set_part_yoffset(part)
     return part.s_pos[2] - part.anchor[2] - 1
 end
 
-function set_j_xoff(frame, ref)
+function set_joint_xoffset(frame, ref)
     return (frame.s_pos[1] - frame.anchor[1] - 1) - (frame.s_pos[1] - frame.joints[ref][1] - 1)
 end
 
-function set_j_yoff(frame, ref)
+function set_joint_yoffset(frame, ref)
     return (frame.s_pos[2] - frame.anchor[2] - 1) - (frame.s_pos[2] - frame.joints[ref][2] - 1)
 end
 
-function p_spr(part, x, y, flipx)
+function part_sprite(part, x, y, flipx)
     local p = part
-    pq(p)
     if flipx == false then
         sspr(
             p.s_pos[1],
@@ -104,7 +85,6 @@ function p_spr(part, x, y, flipx)
             p.s_pos[4], 
             flipx
         )
-        -- print(x + set_p_xoff(p) .. "_" .. p.slot .. sl)
     end
     if flipx == true then
         --to understand 5th arg: (s_pos - anchor) = pixels away from top left corner. Results in negative number
@@ -122,6 +102,5 @@ function p_spr(part, x, y, flipx)
             p.s_pos[4], 
             false
         )
-        -- print(x + set_p_xoff(p) + p.s_pos[3] .. " " .. p.slot)
     end
 end

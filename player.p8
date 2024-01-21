@@ -70,7 +70,6 @@ player.parts.legs =
 function player:set_sprites()
     local p_sp = bake_sprites('frame1', 'head1', 'arm1', 'arm1', 'legs1')
     for key, value in pairs(self.parts) do
-        printh("reached "..key)
         self.parts[key].spr = p_sp[key]
     end
 end
@@ -99,15 +98,24 @@ function player:attack()
 end
 
 function player:sprites()
-    printh("sprites func reached")
     local ps = self.parts
-    x, y = 64,64
-    p_spr(ps.frame.spr, x, y, false)
-    p_spr(ps.frame.spr, x, y, true)
+    x, y = 95,30
+    part_sprite(ps.frame.spr, x, y, false)
+    part_sprite(ps.frame.spr, x, y, true)
     for key, value in pairs(ps) do
         if key.slot != "frame" then
-            p_spr(ps[key].spr, x, y, false)
-            p_spr(ps[key].spr, x, y, true)
+            part_sprite(ps[key].spr, x, y, false)
+            part_sprite(ps[key].spr, x, y, true)
+        end
+    end
+
+    x, y = 33,90
+    part_sprite(ps.frame.spr, x, y, false)
+    part_sprite(ps.frame.spr, x, y, true)
+    for key, value in pairs(ps) do
+        if key.slot != "frame" then
+            part_sprite(ps[key].spr, x, y, false)
+            part_sprite(ps[key].spr, x, y, true)
         end
     end
 end

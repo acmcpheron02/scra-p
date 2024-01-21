@@ -8,17 +8,17 @@ __lua__
 #include managers.p8
 #include ui.p8
 #include parts.p8
+#include funcs.p8
 
 game_states = {title, combat}
 game_state = nil
 
 --definitions
-parti = { "frame", "head", "larm", "rarm", "legs"}
+part_index = { "frame", "head", "larm", "rarm", "legs"}
 
 function _init()
     printh("\n\n Fresh Run")
     game_state = title
-    -- bake_sprites('frame1', 'head1', 'arm1', 'arm1', 'legs1')
     player:set_sprites()
 end
 
@@ -39,27 +39,6 @@ end
 
 function title.state_draw()
     cls(1)
-    --title_ui()
-    -- local frame = pdepot.frame1
-    -- local head = pdepot.head1
-    -- local larm = pdepot.arm1
-    -- local rarm = pdepot.arm1
-    -- local legs = pdepot.legs1
-    -- local posx = 90
-    -- local posy = 52
-
-    -- p_spr(legs, posx, 40, false)
-    -- p_spr(legs, posx, 40, true)
-    -- p_spr(larm, posx, 23, false)
-    -- p_spr(rarm, posx, 23, true)
-    -- --p_spr(frame, 94, 30, false)
-    -- --p_spr(frame, 94, 30, true)
-    -- p_spr(head, posx, 21, false)
-    -- p_spr(head, posx, 21, true)
-
-    -- sspr(0,0,8,8,8,8,8,8,false)
-    -- sspr(0,0,8,8,8,10,-8,8,false)
-
     player:sprites()
 end
 
@@ -80,7 +59,6 @@ end
 
 function combat.state_draw()
     cls()
-    combat_ui()
 end
 
 __gfx__

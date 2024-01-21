@@ -2,22 +2,6 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
---[[
-Combat manager needs the following menu options
-
-Attack
-Skills
-Stats
-
-Attack simply performs an attack with no
-further interactions
-
-Skills brings up a sub menu
-
-Stats moves to different screen entirely
-
---]]
-
 --Combat Manager
 cm = {
     pl = player, 

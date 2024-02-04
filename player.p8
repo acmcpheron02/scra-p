@@ -19,8 +19,6 @@ player.parts.frame = {
     str = 7,
     def = 2,
     spd = 5,
-    spri = {16,16,16,16},
-    r_pos = {0,0},
     spr = {}
 }
 
@@ -29,8 +27,6 @@ player.parts.head = {
     str = 0,
     def = 1,
     spd = 0,
-    spri = {0,16,16,16},
-    r_pos = {0,-16},
     spr = {}
 }
 
@@ -39,8 +35,6 @@ player.parts.larm = {
     str = 4,
     def = 3,
     spd = 0,
-    spri = {48,16,16,16},
-    r_pos = {-16,0},
     spr = {}
 }
 
@@ -50,9 +44,6 @@ player.parts.rarm = {
     def = 0,
     spd = 8,
     pwr = 100,
-    hits = 1,
-    spri = {64,16,16,16},
-    r_pos = {16,-8},
     spr = {}
 }
 
@@ -62,8 +53,6 @@ player.parts.lleg =
     str = 8,
     def = 0,
     spd = 8,
-    spri = {32,16,16,16},
-    r_pos = {0,16},
     spr = {}
 }
 
@@ -73,8 +62,6 @@ player.parts.rleg =
     str = 8,
     def = 0,
     spd = 8,
-    spri = {32,16,16,16},
-    r_pos = {0,16},
     spr = {}
 }
 
@@ -100,12 +87,6 @@ function player:robo_update_stats()
     end
     self.current_hp = self.hp
     self.tc = self.spd
-end
-
-function player:attack()
-    for i=1,#self.attacks do
-        self.opp.current_hp -= (self.attacks[i]/100 * self.str) 
-    end
 end
 
 function player:sprites()

@@ -2,19 +2,32 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
+plt = {}
+
+ plt[1] = 15   --ring_primary 
+ plt[2] = -11   --ring_shadow
+ plt[3] = 8     --player_primary
+ plt[4] = 9    --player_secondary
+ plt[5] = 2     --player_shadow
+ plt[6] = 14    --player_highlight
+
+for i=1,#plt do
+    pal(i,plt[i],1)
+end
+
 function ui_draw()
     --ropes
-    line(64,30,127,-2,13)
-    line(64,30,0,-2,13)
-    line(64,40,0,8,13)
-    line(64,40,127,8,13)
-    line(64,50,0,18,13)
-    line(64,50,127,18,13)
+    line(64,30,127,-2,1)
+    line(64,30,0,-2,1)
+    line(64,40,0,8,1)
+    line(64,40,127,8,1)
+    line(64,50,0,18,1)
+    line(64,50,127,18,1)
 
     --floor
     for i=0, 70 do
-        line(64,60+i,0,28+i,13)
-        line(64,60+i,127,28+i,13)
+        line(64,60+i,0,28+i,1)
+        line(64,60+i,127,28+i,1)
     end
 
     --divider

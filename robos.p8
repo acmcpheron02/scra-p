@@ -2,60 +2,9 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
-
-function robo_make(target, frame, head, larm, rarm, legs)
-    
-    target.parts = {}
-    target.sprites = {}
-    target.hp = 0
-    target.str = 0
-    target.def = 0
-    target.spd = 0
-    target.current_hp = 0
-    target.tc = 0
-    target.pos = {90, 20}
-    target.attacks = {}
-
-    target.sprites = bake_sprites(frame, head, larm, rarm, legs)
-
-    target.parts.frame = part_make(2, frame)
-    target.parts.head = part_make(2, head)
-    target.parts.larm = part_make(2, larm)
-    target.parts.rarm = part_make(2, rarm)
-    target.parts.legs = part_make(2, legs)
-    
-    robo_update_stats(target)
-
-end
-
-function part_make(grade, depot_entry)
-    local part = {
-        hp = 0,
-        str = 0,
-        def = 0,
-        spd = 0,
-        chrg = 0,
-        grade = grade
-    }
-    
-    local points = flr(grade * 8 + rnd(grade*4))
-
-    for i=1, #depot_entry.distribution do
-        if points <= 0 then break end
-        local assign = flr(rnd(points)+1)
-        points -= assign
-
-        part[depot_entry.distribution[i]] = assign*depot_entry.dist_ratio[i]
-    end
-
-    return part
-end
-
-
-
 part_depot = {
     frame1 = {
-        slot = 'frame',
+        --slot = 'frame',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
         s_pos = { 2, 24, 27, 28 },
@@ -66,39 +15,110 @@ part_depot = {
             larm = { 23, 29 },
             rleg = { 14, 44 },
             lleg = { 27, 44 }
-        },
-        ani_x = 0,
-        ani_y = 0 
+        }
     },
     head1 = {
-        slot = 'head',
+        --slot = 'head',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
         s_pos = { 2, 8, 27, 16 },
-        anchor = { 15, 23 }, --sprite sheet location
-        ani_x = 0,
-        ani_y = 0 
+        anchor = { 15, 23 } --sprite sheet location
     },
     arm1 = {
-        slot = 'arm',
+        --slot = 'arm',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
         s_pos = { 66, 8, 22, 16 },
-        anchor = { 85, 10 }, --sprite sheet location
-        ani_x = 0,
-        ani_y = 0 
+        anchor = { 85, 10 } --sprite sheet location
 
     },
     leg1 = {
-        slot = 'leg',
+        --slot = 'leg',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
         s_pos = { 64, 24, 16, 32 },
-        anchor = { 78, 26 }, --sprite sheet location
-        ani_x = 0,
-        ani_y = 0 
+        anchor = { 78, 26 } --sprite sheet location
     }
 }
+
+function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
+    
+    target.parts = {
+        frame = {},
+        head = {},
+        larm = {},
+        rarm = {},
+        lleg = {},
+        rleg = {}
+    }
+    target.attacks = {}
+    target.hp = 0
+    target.str = 0
+    target.def = 0
+    target.spd = 0
+    target.current_hp = 0
+    target.pos_x = 90 
+    target.pox_y = 20
+    target.flipx = flipx
+
+    --target.sprites = bake_sprites(frame, head, larm, rarm, legs)
+
+    part_make("frame", target.parts.frame, target.parts.frame, 2, d_frame)
+    part_make("head", target.parts.head, target.parts.frame, 2, d_head)
+    part_make("larm", target.parts.larm, target.parts.frame, 2, d_larm)
+    part_make("rarm", target.parts.rarm, target.parts.frame, 2, d_rarm)
+    part_make("lleg", target.parts.lleg, target.parts.frame, 2, d_legs)
+    part_make("rleg", target.parts.rleg, target.parts.frame, 2, d_legs)
+
+    robo_update_stats(target)
+
+end
+
+function part_make(slot, part, frame, grade, depot_entry)
+    
+    --stats start
+    part.slot = slot
+    part.hp = 0
+    part.str = 0
+    part.def = 0
+    part.spd = 0
+    part.chrg = 0
+    part.grade = grade
+    
+    if part.slot != 'rleg' then
+        local points = flr(grade * 8 + rnd(grade*4))
+
+        for i=1, #depot_entry.distribution do
+            if points <= 0 then break end
+            local assign = flr(rnd(points)+1)
+            points -= assign
+
+            part[depot_entry.distribution[i]] = assign*depot_entry.dist_ratio[i]
+        end
+    end
+    --stats end
+
+    --sprites start
+    part.s_pos = depot_entry.s_pos
+    part.ani_x = 0
+    part.ani_y = 0
+
+    if part.slot == "frame" then
+        part.joints = depot_entry.joints
+        part.anchor = depot_entry.anchor
+    end
+
+    part.px_off = part.s_pos[1] - depot_entry.anchor[1]
+    part.py_off = part.s_pos[2] - depot_entry.anchor[2]
+
+    if part.slot != "frame" then
+        part.px_off += (frame.s_pos[1] - frame.anchor[1]) - (frame.s_pos[1] - frame.joints[part.slot][1])
+        part.py_off += (frame.s_pos[2] - frame.anchor[2]) - (frame.s_pos[2] - frame.joints[part.slot][2])
+    end
+    --sprites end
+
+end
+
 
 function robo_update_stats(target)
     for key, value in pairs(target.parts) do
@@ -117,6 +137,7 @@ function robo_update_stats(target)
     target.tc = target.spd
 end
 
+
 function robo_sprites(target)
     local flipx, x, y
 
@@ -128,87 +149,43 @@ function robo_sprites(target)
         x, y = 100, 42
     end
 
-    local sp = target.sprites
-
-    part_sprite(sp.rarm, x, y, flipx)
-    part_sprite(sp.rleg, x, y, flipx)
-    part_sprite(sp.frame, x, y, flipx)
-    part_sprite(sp.head, x, y, flipx)
-    part_sprite(sp.larm, x, y, flipx)
-    part_sprite(sp.lleg, x, y, flipx)
+    part_sprite(target.parts.rarm, x, y, flipx)
+    part_sprite(target.parts.rleg, x, y, flipx)
+    part_sprite(target.parts.frame, x, y, flipx)
+    part_sprite(target.parts.head, x, y, flipx)
+    part_sprite(target.parts.larm, x, y, flipx)
+    part_sprite(target.parts.lleg, x, y, flipx)
 end
     
 
-function bake_sprites(frame, head, larm, rarm, legs)
-    -- create an array of sprite details, then store offset values on them
-
-    local p_sp = {}
-
-    p_sp.frame = deepcopy(frame)
-    p_sp.head = deepcopy(head)
-    p_sp.larm = deepcopy(larm)
-    p_sp.rarm = deepcopy(rarm)
-    p_sp.lleg = deepcopy(legs)
-    p_sp.rleg = deepcopy(legs)
-
-    for key, value in pairs(p_sp) do
-        p_sp[key].px_off =  set_part_xoffset(p_sp[key])
-        p_sp[key].py_off =  set_part_yoffset(p_sp[key])
-
-        if value.slot != "frame" then
-            p_sp[key].px_off += set_joint_xoffset(p_sp["frame"], key)
-            p_sp[key].py_off += set_joint_yoffset(p_sp["frame"], key)
-        end
-    end
-
-    return p_sp
-end
-
-
-function set_part_xoffset(part)
-    return part.s_pos[1] - part.anchor[1]
-end
-
-function set_part_yoffset(part)
-    return part.s_pos[2] - part.anchor[2]
-end
-
-function set_joint_xoffset(frame, ref)
-    return (frame.s_pos[1] - frame.anchor[1]) - (frame.s_pos[1] - frame.joints[ref][1])
-end
-
-function set_joint_yoffset(frame, ref)
-    return (frame.s_pos[2] - frame.anchor[2]) - (frame.s_pos[2] - frame.joints[ref][2])
-end
-
 function part_sprite(part, x, y, flipx)
-    local p = part
     if flipx == false then
         sspr(
-            p.s_pos[1],
-            p.s_pos[2], 
-            p.s_pos[3], 
-            p.s_pos[4], 
-            x + p.px_off + p.ani_x,
-            y + p.py_off + p.ani_y, 
-            p.s_pos[3], 
-            p.s_pos[4]
+            part.s_pos[1],
+            part.s_pos[2], 
+            part.s_pos[3], 
+            part.s_pos[4], 
+            x + part.px_off + part.ani_x,
+            y + part.py_off + part.ani_y, 
+            part.s_pos[3], 
+            part.s_pos[4]
         )
     end
     if flipx == true then
+        --pq(part)
         --to understand 5th arg: (s_pos - anchor) = pixels away from top left corner. Results in negative number
         --normally by adding this, you offset the pixels so that the targetted anchor is where x,y is provided
         --but because of the xflip, the anchor moves too. Because we know the sprite dimensions though,
         --we can find the right most edge and move left from there instead, so subtract the anchor.
         sspr(
-            p.s_pos[1],
-            p.s_pos[2],
-            p.s_pos[3], 
-            p.s_pos[4],
-            x - p.px_off - p.ani_x,
-            y + p.py_off + p.ani_y, 
-            -p.s_pos[3], 
-            p.s_pos[4]
+            part.s_pos[1],
+            part.s_pos[2],
+            part.s_pos[3], 
+            part.s_pos[4],
+            x - part.px_off - part.ani_x,
+            y + part.py_off + part.ani_y, 
+            -part.s_pos[3], 
+            part.s_pos[4]
         )
     end
 end

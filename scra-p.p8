@@ -40,14 +40,14 @@ title = {}
 function title.state_update()
     if(btn(5)) then
 
-        player.sprites.rarm.ani_x = -6
+        player.parts.rarm.ani_x = -6
     else
-        player.sprites.rarm.ani_x = 0
+        player.parts.rarm.ani_x = 0
     end
     if(btn(4)) then
-        enemy.sprites.rarm.ani_x = -6
+        enemy.parts.rarm.ani_x = -6
     else
-        enemy.sprites.rarm.ani_x = 0
+        enemy.parts.rarm.ani_x = 0
     end
 end
 

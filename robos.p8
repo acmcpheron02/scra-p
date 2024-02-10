@@ -3,34 +3,29 @@ version 39
 __lua__
 
 
-function robo_make(frame, head, larm, rarm, legs)
-    local robo = {
-        parts = {},
-        sprites = {},
-        hp = 0,
-        str = 0,
-        def = 0,
-        spd = 0,
-        current_hp = 0,
-        tc = 0,
-        pos = {90, 20},
-        attacks = {}
-    }
-
-    robo.sprites = bake_sprites(frame, head, larm, rarm, legs)
-    --pq(robo.sprites)
-
-    robo.parts.frame = part_make(2, frame)
-    robo.parts.head = part_make(2, head)
-    robo.parts.larm = part_make(2, larm)
-    robo.parts.rarm = part_make(2, rarm)
-    robo.parts.legs = part_make(2, legs)
-    --pq(robo.parts)
+function robo_make(target, frame, head, larm, rarm, legs)
     
-    robo_update_stats(robo)
-    --printh(robo.current_hp)
+    target.parts = {}
+    target.sprites = {}
+    target.hp = 0
+    target.str = 0
+    target.def = 0
+    target.spd = 0
+    target.current_hp = 0
+    target.tc = 0
+    target.pos = {90, 20}
+    target.attacks = {}
 
-    return robo
+    target.sprites = bake_sprites(frame, head, larm, rarm, legs)
+
+    target.parts.frame = part_make(2, frame)
+    target.parts.head = part_make(2, head)
+    target.parts.larm = part_make(2, larm)
+    target.parts.rarm = part_make(2, rarm)
+    target.parts.legs = part_make(2, legs)
+    
+    robo_update_stats(target)
+
 end
 
 function part_make(grade, depot_entry)
@@ -44,19 +39,15 @@ function part_make(grade, depot_entry)
     }
     
     local points = flr(grade * 8 + rnd(grade*4))
-    --printh("points:" .. points)
 
     for i=1, #depot_entry.distribution do
         if points <= 0 then break end
         local assign = flr(rnd(points)+1)
         points -= assign
-        --printh("points:" .. points)
-        --printh("assign:" .. assign)
 
         part[depot_entry.distribution[i]] = assign*depot_entry.dist_ratio[i]
     end
 
-    --pq(part)
     return part
 end
 
@@ -75,28 +66,37 @@ part_depot = {
             larm = { 23, 29 },
             rleg = { 14, 44 },
             lleg = { 27, 44 }
-        }
+        },
+        ani_x = 0,
+        ani_y = 0 
     },
     head1 = {
         slot = 'head',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
         s_pos = { 2, 8, 27, 16 },
-        anchor = { 15, 23 } --sprite sheet location
+        anchor = { 15, 23 }, --sprite sheet location
+        ani_x = 0,
+        ani_y = 0 
     },
     arm1 = {
         slot = 'arm',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
         s_pos = { 66, 8, 22, 16 },
-        anchor = { 85, 10 } --sprite sheet location
+        anchor = { 85, 10 }, --sprite sheet location
+        ani_x = 0,
+        ani_y = 0 
+
     },
     leg1 = {
         slot = 'leg',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
         s_pos = { 64, 24, 16, 32 },
-        anchor = { 78, 26 } --sprite sheet location
+        anchor = { 78, 26 }, --sprite sheet location
+        ani_x = 0,
+        ani_y = 0 
     }
 }
 
@@ -118,37 +118,24 @@ function robo_update_stats(target)
 end
 
 function robo_sprites(target)
-    -- for key, value in pairs(target.sprites) do
-    --     part_sprite(value, 64, 64, false)
-    -- end
     local flipx, x, y
 
     if target == player then
         flipx = true
-        x, y = 28, 36
+        x, y = 28, 42
     else
         flipx = false
-        x, y = 100, 36
+        x, y = 100, 42
     end
 
-    printh(flipx)
     local sp = target.sprites
 
-    -- if target == player then
-    --     part_sprite(sp.larm, x, y, flipx)
-    --     part_sprite(sp.lleg, x, y, flipx)
-    --     part_sprite(sp.frame, x, y, false)
-    --     part_sprite(sp.head, x, y, false)
-    --     part_sprite(sp.rarm, x, y, flipx)
-    --     part_sprite(sp.rleg, x, y, flipx)
-    -- else
-        part_sprite(sp.rarm, x, y, flipx)
-        part_sprite(sp.rleg, x, y, flipx)
-        part_sprite(sp.frame, x, y, flipx)
-        part_sprite(sp.head, x, y, flipx)
-        part_sprite(sp.larm, x, y, flipx)
-        part_sprite(sp.lleg, x, y, flipx)
-    --end
+    part_sprite(sp.rarm, x, y, flipx)
+    part_sprite(sp.rleg, x, y, flipx)
+    part_sprite(sp.frame, x, y, flipx)
+    part_sprite(sp.head, x, y, flipx)
+    part_sprite(sp.larm, x, y, flipx)
+    part_sprite(sp.lleg, x, y, flipx)
 end
     
 
@@ -196,15 +183,14 @@ end
 
 function part_sprite(part, x, y, flipx)
     local p = part
-    pq(p)
     if flipx == false then
         sspr(
             p.s_pos[1],
             p.s_pos[2], 
             p.s_pos[3], 
             p.s_pos[4], 
-            x + p.px_off,
-            y + p.py_off, 
+            x + p.px_off + p.ani_x,
+            y + p.py_off + p.ani_y, 
             p.s_pos[3], 
             p.s_pos[4]
         )
@@ -219,8 +205,8 @@ function part_sprite(part, x, y, flipx)
             p.s_pos[2],
             p.s_pos[3], 
             p.s_pos[4],
-            x - p.px_off,
-            y + p.py_off, 
+            x - p.px_off - p.ani_x,
+            y + p.py_off + p.ani_y, 
             -p.s_pos[3], 
             p.s_pos[4]
         )

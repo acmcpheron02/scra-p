@@ -11,6 +11,7 @@ plt = {}
  plt[5] = 2     --player_shadow
  plt[6] = 14    --player_highlight
 
+
 for i=1,#plt do
     pal(i,plt[i],1)
 end
@@ -49,13 +50,13 @@ function ui_draw()
 
     --shadows
     fillp(0B1010010110100101.1)
-    circfill(26,68,15,1)
-    circfill(102,68,15,1)
+    circfill(26,68,15,2)
+    circfill(102,68,15,2)
     fillp(0b0000000000000000)
 
     --controls
-    rect(0,97,127,127,13)
-    rectfill(1,96,126,126,0)
+    --rect(0,97,127,127,1)
+    rectfill(0,96,127,127,0)
     --labels
     print("chrg", 4, 120, 7)
     print("def", 40, 120, 7)

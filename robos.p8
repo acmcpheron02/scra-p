@@ -28,8 +28,8 @@ part_depot = {
         --slot = 'arm',
         distribution = {"hp", "def", "str", "chrg", "spd"},
         dist_ratio = {10, 1, 3, 3, 3},
-        s_pos = { 66, 8, 22, 16 },
-        anchor = { 85, 10 } --sprite sheet location
+        s_pos = { 66, 11, 22, 10 },
+        anchor = { 82, 16} --sprite sheet location
 
     },
     leg1 = {
@@ -72,6 +72,7 @@ function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
 
     robo_update_stats(target)
 
+    pq(target.parts.rarm)
 end
 
 function part_make(slot, part, frame, grade, depot_entry)
@@ -143,18 +144,35 @@ function robo_sprites(target)
 
     if target == player then
         flipx = true
-        x, y = 28, 42
+        target.pos_x, target.pos_y = 28, 42
     else
         flipx = false
-        x, y = 100, 42
+        target.pos_x, target.pos_y = 100, 42
     end
 
-    part_sprite(target.parts.rarm, x, y, flipx)
-    part_sprite(target.parts.rleg, x, y, flipx)
-    part_sprite(target.parts.frame, x, y, flipx)
-    part_sprite(target.parts.head, x, y, flipx)
-    part_sprite(target.parts.larm, x, y, flipx)
-    part_sprite(target.parts.lleg, x, y, flipx)
+    
+    part_sprite(target.parts.rarm, target.pos_x, target.pos_y, flipx)
+    part_sprite(target.parts.rleg, target.pos_x, target.pos_y, flipx)
+    part_sprite(target.parts.frame, target.pos_x, target.pos_y, flipx)
+    part_sprite(target.parts.head, target.pos_x, target.pos_y, flipx)
+    
+    line(
+        target.pos_x + target.parts.larm.px_off,
+        target.pos_y + target.parts.larm.py_off + 7,
+        target.pos_x + target.parts.larm.px_off - target.parts.larm.ani_x,
+        target.pos_y + target.parts.larm.py_off + target.parts.larm.ani_y + 7,
+        4)
+    line(
+        target.pos_x + target.parts.larm.px_off + 1,
+        target.pos_y + target.parts.larm.py_off + 7,
+        target.pos_x + target.parts.larm.px_off - target.parts.larm.ani_x + 1,
+        target.pos_y + target.parts.larm.py_off + target.parts.larm.ani_y + 7,
+        4)
+    --below is close, seems that the current y setting gets to our joint
+    --line(5,5,target.pos_x + target.parts.larm.px_off - target.parts.larm.ani_x, target.pos_y + target.parts.larm.py_off + target.parts.larm.ani_y,10)
+    
+    part_sprite(target.parts.larm, target.pos_x, target.pos_y, flipx)
+    part_sprite(target.parts.lleg, target.pos_x, target.pos_y, flipx)
 end
     
 

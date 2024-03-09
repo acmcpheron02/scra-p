@@ -144,10 +144,10 @@ function robo_sprites(target)
 
     if target == player then
         flipx = true
-        target.pos_x, target.pos_y = 28, 42
+        target.pos_x, target.pos_y = 44, 48
     else
         flipx = false
-        target.pos_x, target.pos_y = 100, 42
+        target.pos_x, target.pos_y = 84, 48
     end
 
     

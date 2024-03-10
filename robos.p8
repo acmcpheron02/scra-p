@@ -56,7 +56,9 @@ function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
     target.str = 0
     target.def = 0
     target.spd = 0
+    target.chrg = 0
     target.current_hp = 0
+    target.current_chrg = 0
     target.pos_x = 90 
     target.pox_y = 20
     target.flipx = flipx
@@ -82,8 +84,8 @@ function part_make(slot, part, frame, grade, depot_entry)
     part.hp = 0
     part.str = 0
     part.def = 0
-    part.spd = 0
-    part.chrg = 0
+    part.spd = 0 --used for accuracy ratio
+    part.chrg = 0 --used for battery charge speed
     part.grade = grade
     
     if part.slot != 'rleg' then
@@ -128,6 +130,7 @@ function robo_update_stats(target)
         target.str += part.str
         target.def += part.def
         target.spd += part.spd
+        target.chrg += part.chrg
         if part.pwr != nil then
             for i=1,part.hits do
                 add(target.attacks, part.pwr)

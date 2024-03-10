@@ -2,82 +2,43 @@ pico-8 cartridge // http://www.pico-8.com
 version 39
 __lua__
 
---Combat Manager
 cm = {
-    pl = player, 
-    en = enemy,
-    sel_index = 1
+    time = 31
 }
 
-function cm:new(o,pl,en)
-    o = o or {}
-    setmetatable(o, self)
-    self.__index = self
-    
-    self.pl = pl
-    self.en = en
-
-    pl.opp = en
-    en.opp = pl
+function cm.update()
+    cm.timer()
 end
 
-function cm:update()
-    if self:who_turn() == "player" then
-        self:pl_turn()
-    elseif self:who_turn() == "enemy" then
-        self:en_turn()
-    else
-        self:turn_advance()
+function cm.timer()
+    cm.time -= 1/60
+    player.current_hp -= 2
+    player.current_chrg += player.chrg/1000
+end
+
+
+function cm.get_time1()
+    return flr(cm.time / 10)
+end
+
+function cm.get_time2()
+    return flr(cm.time % 10)
+end
+
+function cm.player_health()
+    local pct = player.current_hp / player.hp
+    if pct <= 0 then
+        return
     end
+    rectfill(52,6,52-flr(53*pct),0,3)
 end
 
-function cm:move_cursor(direction)
-    if btnp(2) then
-        if self.sel_index <= 1 then self.sel_index = 1 
-        else self.sel_index -= 1
-        end
+function cm.enemy_health()
+    local pct = player.current_hp / player.hp
+    if pct <= 0 then
+        return
     end
-    if btnp(3) then
-        if self.sel_index >= 3 then self.sel_index = 3
-        else self.sel_index += 1 
-        end
-    end
+    rectfill(75,6,75+flr(53*pct),0,3)
 end
 
-function cm:submit()
-    if self.sel_index == 1 then self.pl:attack() end
-end
-    
-function cm:pl_turn()
-    self:move_cursor()
-    if btn(4) then 
-        self:submit()
-        self:reset_tc(cm.pl)
-    end
-end
-
-function cm:en_turn()
-    local r = rnd(10)
-    if r <= 10 then
-        self.en:attack()
-        self:reset_tc(cm.en)
-    end
-end
-
-function cm:who_turn()
-    if self.pl.tc >= 75 then
-        return "player"
-    elseif self.en.tc >= 75 then
-        return "enemy"
-    else return "none"
-    end
-end
-
-function cm:turn_advance()
-    self.pl.tc += 1
-    self.en.tc += 1
-end
-
-function cm:reset_tc(t)
-    t.tc = t.spd
-end
+rectfill(127,0,74,6,7)

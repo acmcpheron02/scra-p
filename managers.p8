@@ -4,7 +4,11 @@ __lua__
 
 cm = {
     time = 31,
-    selected = 0 --1st bit x, 2nd bit y
+    selected = 0, --1st bit x, 2nd bit y
+    player_attacks = {},
+    player_costs = {},
+    enemy_attacks = {},
+    enemy_costs = {}
 }
 
 function cm.update()
@@ -14,8 +18,8 @@ end
 
 function cm.timer()
     cm.time -= 1/60
-    player.current_hp -= 0.1
-    player.current_chrg += player.chrg>>12
+    --player.current_hp -= 0.1
+    player.current_chrg += player.chrg>>10
 end
 
 function cm.get_time1()
@@ -34,8 +38,23 @@ function cm.player_health()
     rectfill(52,6,52-flr(53*pct),0,4)
 end
 
+function cm.get_player_attacks()
+    printh(tostr(player.parts.larm.attack))
+    cm.player_attacks[1] = player.parts.larm.attack
+    cm.player_attacks[2] = player.parts.rarm.attack
+    cm.player_attacks[3] = player.parts.head.attack
+    cm.player_attacks[4] = player.parts.lleg.attack
+end
+
+function cm.get_player_costs()
+    cm.player_costs[1] = player.parts.larm.cost
+    cm.player_costs[2] = player.parts.rarm.cost
+    cm.player_costs[3] = player.parts.head.cost
+    cm.player_costs[4] = player.parts.lleg.cost
+end
+
 function cm.enemy_health()
-    local pct = player.current_hp / player.hp
+    local pct = enemy.current_hp / enemy.hp
     if pct <= 0 then
         return
     end
@@ -51,6 +70,8 @@ function move_select()
     end
 
 end
+
+
 
 animations = {
 

@@ -55,9 +55,8 @@ function ui_draw()
     cm.enemy_health()
     
     --timer
-    rectfill(53,0,74,6,13)
-    circfill(64,1,10, 13)
-    circfill(63,1,10, 13)
+    circfill(64,1,11, 13)
+    circfill(63,1,11, 13)
     --print("2", 60, 2, 7)
     --print("0", 65, 2, 7)
     print(cm.get_time1(), 60, 2, 1)
@@ -71,7 +70,8 @@ function ui_draw()
 
     --battery display
     sspr(32,0,11,20,6,100)
-    print(flr(player.current_chrg),8,108,2)
+    rectfill(7,118,15,118-(player.current_chrg%1*14),12)
+    print_xcen(tostr(flr(player.current_chrg)),12,108,13)
     rectfill(16, 108, 111, 111, 13)
     rectfill(17, 110, 18, 119, 13)
     rectfill(61, 105, 63, 116, 13)
@@ -100,15 +100,14 @@ function ui_draw()
         rectfill(72, 115, 116, 123, 14)
     end
 
-
-    print("9",61,98,12)
-    print("3",112,98,12)
-    print("6",61,117,12)
-    print("5",112,117,12)
-    print_xcen("uppercut", 42, 98, 15)
-    print_xcen("jab", 92, 98, 15)
-    print_xcen("sparker", 42, 117, 15)
-    print_xcen("rev up", 92, 117, 15)
+    print(cm.player_costs[1],61,98,12)
+    print(cm.player_costs[2],112,98,12)
+    print(cm.player_costs[3],61,117,12)
+    print(cm.player_costs[4],112,117,12)
+    print_xcen(cm.player_attacks[1], 42, 98, 15)
+    print_xcen(cm.player_attacks[2], 92, 98, 15)
+    print_xcen(cm.player_attacks[3], 42, 117, 15)
+    print_xcen(cm.player_attacks[4], 92, 117, 15)
 
 end
 

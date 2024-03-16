@@ -23,7 +23,7 @@ end
 
 function dist_by_grade(grade)
     local dist = {}
-    for i=1,7 do
+    for i=1,6 do
         dist[i] = flr(grade*2.5 + rnd(grade*2))
     end
     --pq(dist)

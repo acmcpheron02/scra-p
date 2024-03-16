@@ -6,7 +6,7 @@ part_depot = {
     frame1 = {
         --slot = 'frame',
         distribution = {"hp", "def", "chrg", "spd", "str"},
-        dist_ratio = {10, 1, 2, 3, 3},
+        dist_ratio = {20, 2, 2, 3, 3},
         s_pos = { 2, 24, 27, 28 },
         anchor = { 15, 34 },
         joints = {
@@ -19,7 +19,7 @@ part_depot = {
     },
     head1 = {
         distribution = {"chrg", "spd", "def", "hp", "str"},
-        dist_ratio = {4, 2, 1, 5, 3},
+        dist_ratio = {4, 2, 1, 8, 3},
         attack = "sparker",
         cost = 6,
         s_pos = { 2, 8, 27, 16 }, --sprite sheet location
@@ -27,7 +27,7 @@ part_depot = {
     },
     arm1 = {
         distribution = {"str", "def", "spd", "hp", "chrg"},
-        dist_ratio = {5, 1, 2, 4, 2},
+        dist_ratio = {5, 2, 2, 6, 2},
         attack = "jab",
         cost = 3,
         s_pos = { 66, 11, 22, 10 }, --sprite sheet location
@@ -35,7 +35,7 @@ part_depot = {
     },
     arm2 = {
         distribution = {"str", "def", "spd", "hp", "chrg"},
-        dist_ratio = {5, 1, 2, 4, 2},
+        dist_ratio = {5, 3, 2, 6, 2},
         attack = "uppercut",
         cost = 9,
         s_pos = { 66, 11, 22, 10 }, --sprite sheet location
@@ -43,12 +43,18 @@ part_depot = {
     },
     leg1 = {
         distribution = {"spd", "chrg", "hp", "def", "str"},
-        dist_ratio = {5, 2, 4, 1, 2},
+        dist_ratio = {5, 2, 8, 2, 2},
         attack = "rev up",
         cost = 5,
         s_pos = { 64, 24, 16, 32 }, --sprite sheet location
         anchor = { 78, 26 } --sprite sheet location
     }
+}
+
+attack_lib = {
+    jab = {
+        power = 10
+    },
 }
 
 function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
@@ -61,7 +67,6 @@ function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
         lleg = {},
         rleg = {}
     }
-    target.attacks = {}
     target.hp = 0
     target.str = 0
     target.def = 0
@@ -84,7 +89,7 @@ function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
 
     robo_update_stats(target)
 
-    pq(target.parts.rarm)
+    --pq(target.parts.rarm)
 end
 
 function part_make(slot, part, frame, grade, depot_entry)
@@ -92,6 +97,8 @@ function part_make(slot, part, frame, grade, depot_entry)
 
     --stats start
     part.slot = slot
+    part.attack = depot_entry.attack
+    part.cost = depot_entry.cost
     part.hp = 0
     part.str = 0
     part.def = 0
@@ -104,7 +111,7 @@ function part_make(slot, part, frame, grade, depot_entry)
     if part.slot != 'rleg' then
 
         for i=1, #depot_entry.distribution do
-            part[depot_entry.distribution[i]] = dist[i]
+            part[depot_entry.distribution[i]] = flr(dist[i] * depot_entry.dist_ratio[i] / 10)
         end
     end
     --stats end

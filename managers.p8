@@ -14,8 +14,8 @@ end
 
 function cm.timer()
     cm.time -= 1/60
-    player.current_hp -= 0.5
-    player.current_chrg += player.chrg/1000
+    player.current_hp -= 0.1
+    player.current_chrg += player.chrg>>12
 end
 
 function cm.get_time1()
@@ -49,6 +49,7 @@ function move_select()
     if btnp(2) or btnp(3) then
         cm.selected = cm.selected ^^ 2
     end
+
 end
 
 animations = {

@@ -5,7 +5,7 @@ __lua__
 #include pancelor_debug.p8
 #include managers.p8
 #include ui.p8
-#include parts.p8
+--#include parts.p8
 #include funcs.p8
 #include robos.p8
 
@@ -17,6 +17,7 @@ part_index = { "frame", "head", "larm", "rarm", "legs"}
 
 function _init()
     printh("\n\n Fresh Run")
+    dist_by_grade(3)
     game_state = combat
     player = {}
     enemy = {}

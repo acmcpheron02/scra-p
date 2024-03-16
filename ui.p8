@@ -6,7 +6,7 @@ plt = {}
 
  plt[0] = 0 --black
  plt[1] = 15   --ring_primary 
- plt[2] = -11   --ring_shadow
+ plt[2] = -16   --ring_shadow
  plt[3] = 7  --white
  plt[4] = 8     --player_primary
  plt[5] = 9    --player_secondary
@@ -37,8 +37,8 @@ function ui_draw()
     line(64,29,127,61,1)
     
     --divider
-    line(64,0,64,44,13)
-    line(63,0,63,44,13)
+    line(64,0,64,44,1)
+    line(63,0,63,44,1)
     
     --floor
     for i=0, 90 do

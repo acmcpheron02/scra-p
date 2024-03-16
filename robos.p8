@@ -5,8 +5,8 @@ __lua__
 part_depot = {
     frame1 = {
         --slot = 'frame',
-        distribution = {"hp", "def", "str", "chrg", "spd"},
-        dist_ratio = {10, 1, 3, 3, 3},
+        distribution = {"hp", "def", "chrg", "spd", "str"},
+        dist_ratio = {10, 1, 2, 3, 3},
         s_pos = { 2, 24, 27, 28 },
         anchor = { 15, 34 },
         joints = {
@@ -18,25 +18,35 @@ part_depot = {
         }
     },
     head1 = {
-        --slot = 'head',
-        distribution = {"hp", "def", "str", "chrg", "spd"},
-        dist_ratio = {10, 1, 3, 3, 3},
-        s_pos = { 2, 8, 27, 16 },
+        distribution = {"chrg", "spd", "def", "hp", "str"},
+        dist_ratio = {4, 2, 1, 5, 3},
+        attack = "sparker",
+        cost = 6,
+        s_pos = { 2, 8, 27, 16 }, --sprite sheet location
         anchor = { 15, 23 } --sprite sheet location
     },
     arm1 = {
-        --slot = 'arm',
-        distribution = {"hp", "def", "str", "chrg", "spd"},
-        dist_ratio = {10, 1, 3, 3, 3},
-        s_pos = { 66, 11, 22, 10 },
+        distribution = {"str", "def", "spd", "hp", "chrg"},
+        dist_ratio = {5, 1, 2, 4, 2},
+        attack = "jab",
+        cost = 3,
+        s_pos = { 66, 11, 22, 10 }, --sprite sheet location
         anchor = { 82, 16} --sprite sheet location
-
+    },
+    arm2 = {
+        distribution = {"str", "def", "spd", "hp", "chrg"},
+        dist_ratio = {5, 1, 2, 4, 2},
+        attack = "uppercut",
+        cost = 9,
+        s_pos = { 66, 11, 22, 10 }, --sprite sheet location
+        anchor = { 82, 16} --sprite sheet location
     },
     leg1 = {
-        --slot = 'leg',
-        distribution = {"hp", "def", "str", "chrg", "spd"},
-        dist_ratio = {10, 1, 3, 3, 3},
-        s_pos = { 64, 24, 16, 32 },
+        distribution = {"spd", "chrg", "hp", "def", "str"},
+        dist_ratio = {5, 2, 4, 1, 2},
+        attack = "rev up",
+        cost = 5,
+        s_pos = { 64, 24, 16, 32 }, --sprite sheet location
         anchor = { 78, 26 } --sprite sheet location
     }
 }
@@ -65,12 +75,12 @@ function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
 
     --target.sprites = bake_sprites(frame, head, larm, rarm, legs)
 
-    part_make("frame", target.parts.frame, target.parts.frame, 2, d_frame)
-    part_make("head", target.parts.head, target.parts.frame, 2, d_head)
-    part_make("larm", target.parts.larm, target.parts.frame, 2, d_larm)
-    part_make("rarm", target.parts.rarm, target.parts.frame, 2, d_rarm)
-    part_make("lleg", target.parts.lleg, target.parts.frame, 2, d_legs)
-    part_make("rleg", target.parts.rleg, target.parts.frame, 2, d_legs)
+    part_make("frame", target.parts.frame, target.parts.frame, 3, d_frame)
+    part_make("head", target.parts.head, target.parts.frame, 3, d_head)
+    part_make("larm", target.parts.larm, target.parts.frame, 3, d_larm)
+    part_make("rarm", target.parts.rarm, target.parts.frame, 3, d_rarm)
+    part_make("lleg", target.parts.lleg, target.parts.frame, 3, d_legs)
+    part_make("rleg", target.parts.rleg, target.parts.frame, 0, d_legs)
 
     robo_update_stats(target)
 
@@ -79,6 +89,7 @@ end
 
 function part_make(slot, part, frame, grade, depot_entry)
     
+
     --stats start
     part.slot = slot
     part.hp = 0
@@ -87,16 +98,13 @@ function part_make(slot, part, frame, grade, depot_entry)
     part.spd = 0 --used for accuracy ratio
     part.chrg = 0 --used for battery charge speed
     part.grade = grade
+
+    local dist = dist_by_grade(grade)
     
     if part.slot != 'rleg' then
-        local points = flr(grade * 8 + rnd(grade*4))
 
         for i=1, #depot_entry.distribution do
-            if points <= 0 then break end
-            local assign = flr(rnd(points)+1)
-            points -= assign
-
-            part[depot_entry.distribution[i]] = assign*depot_entry.dist_ratio[i]
+            part[depot_entry.distribution[i]] = dist[i]
         end
     end
     --stats end

@@ -16,6 +16,9 @@ plt = {}
  plt[9] = -9    --enemy_secondary
  plt[10] = -2     --enemy_shadow
  plt[11] = -142    --enemy_highlight
+ plt[12] = -6
+ plt[13] = -13
+ plt[14] = -7
 
 
 for i=1,#plt do
@@ -51,13 +54,14 @@ function ui_draw()
     cm.player_health()
     cm.enemy_health()
     
-        --timer
-        circfill(64,1, 10, 13)
-        circfill(63,1, 10, 13)
-        --print("2", 60, 2, 7)
-        --print("0", 65, 2, 7)
-        print(cm.get_time1(), 60, 2, 1)
-        print(cm.get_time2(), 65, 2, 1)
+    --timer
+    rectfill(53,0,74,6,13)
+    circfill(64,1,10, 13)
+    circfill(63,1,10, 13)
+    --print("2", 60, 2, 7)
+    --print("0", 65, 2, 7)
+    print(cm.get_time1(), 60, 2, 1)
+    print(cm.get_time2(), 65, 2, 1)
     
     --shadows
     fillp(0B1010110111110111.1)
@@ -65,35 +69,46 @@ function ui_draw()
     circfill(91,70,18,2)
     fillp(0b0000000000000000)
 
-    -- --battery display
+    --battery display
     sspr(32,0,11,20,6,100)
     print(flr(player.current_chrg),8,108,2)
     rectfill(16, 108, 111, 111, 13)
-    rectfill(17, 108, 18, 119, 13)
-    
+    rectfill(17, 110, 18, 119, 13)
     rectfill(61, 105, 63, 116, 13)
-    rectfill(109, 105, 111, 116, 13)
+    rectfill(111, 105, 113, 116, 13)
+    line(16,118,17,118,12)
+    line(17,118,17,109,12)
+    line(18,109,112,109,12)
+    line(18,110,112,110,12)
+    line(62,105,62,116,12)
+    line(112,105,112,116,12)
     
-    line(16,118,17,118,4)
-    line(17,118,17,109,4)
-    line(18,109,110,109,4)
-    line(18,110,110,110,4)
-    line(62,105,62,116,4)
-    line(110,105,110,116,4)
-    
-    rectfill(22, 96, 66, 104, 2)
-    print("uppercut", 26, 98, 15)
-    print("9",61,98,4)
-    rectfill(72, 96, 114, 104, 5)
-    print("   jab   ", 68, 98, 15)
-    print("3",109,98,4)
+    --Move selector (reading order)
+    rectfill(22, 96, 66, 104, 13)
+    rectfill(72, 96, 116, 104, 13)
+    rectfill(22, 115, 66, 123, 13)
+    rectfill(72, 115, 116, 123, 13)
 
-    rectfill(22, 115, 66, 123, 2)
-    print("sparker", 26, 117, 15)
-    print("6",61,117,4)
-    rectfill(72, 115, 114, 123, 2)
-    print(" rev up ", 70, 117, 15)
-    print("5",109,117,4)
+    --Highlight selected move
+        if cm.selected == 0 then
+        rectfill(22, 96, 66, 104, 14)
+    elseif cm.selected == 1 then
+        rectfill(72, 96, 116, 104, 14)
+    elseif cm.selected == 2 then
+        rectfill(22, 115, 66, 123, 14)
+    elseif cm.selected == 3 then
+        rectfill(72, 115, 116, 123, 14)
+    end
+
+
+    print("9",61,98,12)
+    print("3",112,98,12)
+    print("6",61,117,12)
+    print("5",112,117,12)
+    print_xcen("uppercut", 42, 98, 15)
+    print_xcen("jab", 92, 98, 15)
+    print_xcen("sparker", 42, 117, 15)
+    print_xcen("rev up", 92, 117, 15)
 
 end
 

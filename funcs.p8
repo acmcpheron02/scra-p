@@ -17,3 +17,6 @@ function deepcopy(orig)
     return copy
 end
 
+function print_xcen(str,x,y,c)
+    print(str, x-#str*2,y,c)
+end

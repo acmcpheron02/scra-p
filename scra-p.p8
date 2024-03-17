@@ -12,11 +12,18 @@ __lua__
 game_states = {title, combat}
 game_state = nil
 
+corlist = {}
+objlist = {}
+
 --definitions
 part_index = { "frame", "head", "larm", "rarm", "legs"}
 
 function _init()
     printh("\n\n Fresh Run")
+
+    poke(0x5f5c, 20) -- set the initial delay before repeating. 255 means never repeat.
+    poke(0x5f5d, 20) -- set the repeating delay.
+
     dist_by_grade(3)
     game_state = combat
     player = {}
@@ -30,7 +37,26 @@ function _init()
     printh("def: "..player.def)
     printh("spd: "..player.spd)
     printh("chrg: "..player.chrg)
+
+    --test_anim = cocreate(robo_animate(player, animations.idle))
+    --cm.use_attack("jab", -10, player, enemy)
+
+    printh(strFix("0000-65.0"))
 end
+
+function strFix(string)
+    --remove excess 0 because tonum gets very angry when it 
+    --sees those
+        for i = 1,#string+1 do
+            if sub(string,i,i) != "0" then break end
+            while sub(string,i,i) == "0" do
+                string = sub(string,i + 1)
+            end
+        end
+        return string
+    end
+
+
 
 function _update60()
     game_state.state_update();
@@ -64,6 +90,15 @@ end
 
 function combat.state_update()
     cm.update()
+
+    if btnp(5) then
+        cor = cocreate(robo_animate)
+      end
+      if cor and costatus(cor) != 'dead' then
+        coresume(cor, player, animations.idle, 10)
+      else
+        cor = nil
+      end
 end
 
 function combat.state_draw()

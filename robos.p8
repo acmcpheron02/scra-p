@@ -53,9 +53,39 @@ part_depot = {
 
 attack_lib = {
     jab = {
-        power = 10
+        power = 8
     },
 }
+
+animations = {
+    idle = {
+        length = 24,
+        larm =  {
+            {0, 10},
+            {1, 9},
+            {0, 10},
+            {-1, 9}
+        },
+        rarm =  {
+            {1, 8},
+            {1, 7},
+            {2, 6},
+            {1, 7}
+        }
+    }
+}
+
+function robo_animate(target, anim, speed)
+    for i=1, anim.length*speed do
+        local j = flr(i/speed)+1
+        for k,v in pairs(anim) do
+            if k != "length" then
+                player.parts[k].ani_x,player.parts[k].ani_y = anim[k][j][1], anim[k][j][2]
+            end
+        end
+        yield()
+    end
+end
 
 function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
     

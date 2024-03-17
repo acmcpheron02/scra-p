@@ -90,8 +90,19 @@ function ui_draw()
     rectfill(72, 115, 116, 123, 13)
 
     --Highlight selected move
-        if cm.selected == 0 then
+    if cm.selected == 0 then
         rectfill(22, 96, 66, 104, 14)
+    elseif cm.selected == 1 then
+        rectfill(72, 96, 116, 104, 14)
+    elseif cm.selected == 2 then
+        rectfill(22, 115, 66, 123, 14)
+    elseif cm.selected == 3 then
+        rectfill(72, 115, 116, 123, 14)
+    end
+
+    --move confirm
+    if cm.selected == 0 and btn(4) then
+        rectfill(22, 96, 66, 104, 3)
     elseif cm.selected == 1 then
         rectfill(72, 96, 116, 104, 14)
     elseif cm.selected == 2 then

@@ -75,17 +75,76 @@ animations = {
     }
 }
 
-function robo_animate(target, anim, speed)
-    for i=1, anim.length*speed do
-        local j = flr(i/speed)+1
-        for k,v in pairs(anim) do
-            if k != "length" then
-                player.parts[k].ani_x,player.parts[k].ani_y = anim[k][j][1], anim[k][j][2]
-            end
+function anim_jab(target)
+    return function()
+        local steps = {
+            {0, 10},
+            {-2, 9},
+            {-6, 7},
+            {-12, 4},
+            {-20, 1},
+            {-20, 1},
+            {-20, 1},
+            {-19, 1},
+            {-15, 2},
+            {-10, 3},
+            {-5,7}
+        }
+
+        for i =1,#steps do
+            target.ani_x, target.ani_y = steps[i][1], steps[i][2]
+            yield()
         end
-        yield()
     end
 end
+
+function larm_idle(target)
+    return function() -- you need to return a nullary function
+        local steps = {
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {-1, 9},
+            {-1, 9},
+            {-1, 9},
+            {-1, 9},
+            {-1, 9},
+            {-1, 9},
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {0, 10},
+            {1, 9},
+            {1, 9},
+            {1, 9},
+            {1, 9},
+            {1, 9},
+            {1, 9}
+        }
+    
+        for i =1,#steps do
+            target.ani_x, target.ani_y = steps[i][1], steps[i][2]
+            yield()
+        end
+    end
+end
+
+-- function robo_animate(target, anim, speed)
+--     for i=1, anim.length*speed do
+--         local j = flr(i/speed)+1
+--         for k,v in pairs(anim) do
+--             if k != "length" then
+--                 player.parts[k].ani_x,player.parts[k].ani_y = anim[k][j][1], anim[k][j][2]
+--             end
+--         end
+--         yield()
+--     end
+-- end
 
 function robo_make(target, d_frame, d_head, d_larm, d_rarm, d_legs, flipx)
     
@@ -150,7 +209,8 @@ function part_make(slot, part, frame, grade, depot_entry)
     part.s_pos = depot_entry.s_pos
     part.ani_x = 0
     part.ani_y = 0
-
+    part.anim = cocreate (function() end)
+    
     if part.slot == "frame" then
         part.joints = depot_entry.joints
         part.anchor = depot_entry.anchor
@@ -166,7 +226,6 @@ function part_make(slot, part, frame, grade, depot_entry)
     --sprites end
 
 end
-
 
 function robo_update_stats(target)
     for key, value in pairs(target.parts) do

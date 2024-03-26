@@ -55,8 +55,8 @@ function ui_draw()
     cm.enemy_health()
     
     --timer
-    circfill(64,1,11, 13)
-    circfill(63,1,11, 13)
+    circfill(65,1,10, 13)
+    circfill(62,1,10, 13)
     --print("2", 60, 2, 7)
     --print("0", 65, 2, 7)
     print(cm.get_time1(), 60, 2, 1)

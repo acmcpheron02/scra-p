@@ -97,9 +97,28 @@ function cm.get_enemy_costs()
     cm.enemy_costs[4] = enemy.parts.lleg.cost
 end
 
+function mk_animator()
+    local threads = {}
+    return {
+        post = function(key, anim_fn)
+            threads[key] = cocreate(anim_fn)
+          end,
+        update = function()
+            for key, thread in pairs(threads) do
+                if costatus(thread) ~= "dead" then
+                    coresume(thread)
+                else
+                    threads[key] = nil -- this is ok to do here
+                end
+            end
+        end,
+        reset = function() threads = {} end,
+        status = function(key)
+            return costatus(threads[key])
+        end,
+        cancel = function(key)
+            threads[key] = nil
+        end
+    }
+end
 
-
-
-animations = {
-
-}

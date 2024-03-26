@@ -40,23 +40,7 @@ function _init()
 
     --test_anim = cocreate(robo_animate(player, animations.idle))
     --cm.use_attack("jab", -10, player, enemy)
-
-    printh(strFix("0000-65.0"))
 end
-
-function strFix(string)
-    --remove excess 0 because tonum gets very angry when it 
-    --sees those
-        for i = 1,#string+1 do
-            if sub(string,i,i) != "0" then break end
-            while sub(string,i,i) == "0" do
-                string = sub(string,i + 1)
-            end
-        end
-        return string
-    end
-
-
 
 function _update60()
     game_state.state_update();
@@ -85,25 +69,30 @@ function combat.init()
     robo_update_stats(enemy)
     cm.get_player_attacks()
     cm.get_player_costs()
+    animator = mk_animator()
     game_state = combat
+
+    animator.post(player.parts.larm, larm_idle(player.parts.larm))
 end
 
 function combat.state_update()
     cm.update()
 
     if btnp(5) then
-        cor = cocreate(robo_animate)
-      end
-      if cor and costatus(cor) != 'dead' then
-        coresume(cor, player, animations.idle, 10)
-      else
-        cor = nil
-      end
+        animator.cancel(player.parts.larm)
+        animator.post(player.parts.larm, anim_jab(player.parts.larm))
+    end
+
+    if animator.status(player.parts.larm) == "dead" then
+        animator.post(player.parts.larm, larm_idle(player.parts.larm))
+    end
+    
 end
 
 function combat.state_draw()
     cls(2)
     ui_draw()
+    animator.update()
     robo_sprites(player)
     robo_sprites(enemy)
 end
